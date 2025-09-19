@@ -5,7 +5,14 @@ import Header from '@/components/common/Header'
 
 const inter = Inter({ subsets: ['latin'] })
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+}
+
 export const metadata: Metadata = {
+  metadataBase: new URL('https://motoroctane.com'),
   title: 'MotorOctane - New Cars in India | Car Prices, Reviews & Specifications',
   description: 'Find new cars in India with latest prices, specifications, reviews, and comparisons. Explore cars by budget, brand, and fuel type. Get EMI calculator and best deals.',
   keywords: 'new cars India, car prices, car specifications, car reviews, EMI calculator, car comparison, car deals',
@@ -16,11 +23,6 @@ export const metadata: Metadata = {
     email: false,
     address: false,
     telephone: false,
-  },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
   },
   robots: {
     index: true,
