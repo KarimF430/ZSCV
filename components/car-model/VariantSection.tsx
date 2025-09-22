@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Filter, Star, Fuel, Zap, Settings } from 'lucide-react'
 
 interface CarData {
@@ -15,6 +16,7 @@ interface VariantSectionProps {
 
 export default function VariantSection({ carData }: VariantSectionProps) {
   const [selectedFilter, setSelectedFilter] = useState('all')
+  const router = useRouter()
 
   const variants = [
     {
@@ -86,8 +88,16 @@ export default function VariantSection({ carData }: VariantSectionProps) {
     return true
   })
 
+  const handleVariantClick = (variant: typeof variants[0]) => {
+    // Navigate to the variant page
+    router.push('/variant')
+  }
+
   const VariantCard = ({ variant }: { variant: typeof variants[0] }) => (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+    <div 
+      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+      onClick={() => handleVariantClick(variant)}
+    >
       <div className="flex items-start justify-between mb-3">
         <div>
           <div className="flex items-center space-x-2 mb-1">
@@ -131,9 +141,9 @@ export default function VariantSection({ carData }: VariantSectionProps) {
       {/* Action Button */}
       <button 
         className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors"
-        onClick={() => {
-          // Navigate to detailed variant page
-          console.log(`Navigate to ${variant.name} details`)
+        onClick={(e) => {
+          e.stopPropagation() // Prevent card click when button is clicked
+          handleVariantClick(variant)
         }}
       >
         View Details

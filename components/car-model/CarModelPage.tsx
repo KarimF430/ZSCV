@@ -694,7 +694,7 @@ const CarModelPage: React.FC<CarModelPageProps> = ({ carData }) => {
                 
                 <div className="flex space-x-3">
                   <Link
-                    href={`/cars/${carData.brand.toLowerCase()}/${carData.model.toLowerCase()}/variants`}
+                    href="/variant"
                     className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                   >
                     View Details
