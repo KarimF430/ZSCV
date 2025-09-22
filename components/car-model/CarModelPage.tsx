@@ -9,6 +9,12 @@ import {
   Gauge, Users, Package, Zap, Settings, Info, ExternalLink, Filter, Grid, List
 } from 'lucide-react'
 import Footer from '../Footer'
+import StickyNavigation from './StickyNavigation'
+import CarEMISection from './CarEMISection'
+import ModelHighlights from './ModelHighlights'
+import VariantSection from './VariantSection'
+import ModelColors from './ModelColors'
+import ProsConsSection from './ProsConsSection'
 
 interface CarData {
   brand: string
@@ -74,16 +80,27 @@ const CarModelPage: React.FC<CarModelPageProps> = ({ carData }) => {
     { id: 'pricing', label: 'Price' },
     { id: 'specifications', label: 'Specs' },
     { id: 'variants', label: 'Variants' },
+    { id: 'emi', label: 'EMI' },
     { id: 'highlights', label: 'Features' },
+    { id: 'model-price', label: 'Model Price' },
     { id: 'colors', label: 'Colors' },
     { id: 'pros-cons', label: 'Pros & Cons' },
+    { id: 'summary', label: 'Summary' },
+    { id: 'engine', label: 'Engine' },
     { id: 'mileage', label: 'Mileage' },
     { id: 'similar-cars', label: 'Similar Cars' },
     { id: 'compare', label: 'Compare' },
     { id: 'news', label: 'News' },
     { id: 'videos', label: 'Videos' },
+    { id: 'faq', label: 'FAQ' },
     { id: 'reviews', label: 'Reviews' },
-    { id: 'faq', label: 'FAQ' }
+    { id: 'upcoming', label: 'Upcoming' },
+    { id: 'new-launches', label: 'New Cars' },
+    { id: 'consultation', label: 'Consult' },
+    { id: 'warranty', label: 'Warranty' },
+    { id: 'offers', label: 'Offers' },
+    { id: 'ownership', label: 'Ownership' },
+    { id: 'feedback', label: 'Feedback' }
   ]
 
   // Auto-rotate images
@@ -180,7 +197,7 @@ const CarModelPage: React.FC<CarModelPageProps> = ({ carData }) => {
       title: `${carData.brand} ${carData.model} 2024 Review: Complete Analysis`,
       excerpt: 'Our comprehensive review of the latest model with detailed analysis.',
       author: 'Auto Expert',
-      publishedAt: '2024-01-15',
+      publishedAt: '15/01/2024',
       readTime: 8,
       category: 'review'
     },
@@ -189,7 +206,7 @@ const CarModelPage: React.FC<CarModelPageProps> = ({ carData }) => {
       title: `${carData.brand} ${carData.model} vs Competition: Which is Better?`,
       excerpt: 'Detailed comparison with similar cars in the segment.',
       author: 'Car Guru',
-      publishedAt: '2024-01-10',
+      publishedAt: '10/01/2024',
       readTime: 6,
       category: 'comparison'
     }
@@ -453,7 +470,11 @@ const CarModelPage: React.FC<CarModelPageProps> = ({ carData }) => {
       </section>
 
       {/* 5. EMI Box */}
-      <section className="bg-white px-4 py-6">
+      <section 
+        id="emi" 
+        ref={(el) => { sectionRefs.current['emi'] = el }}
+        className="bg-white px-4 py-6"
+      >
         <div className="max-w-7xl mx-auto">
           <div className="bg-gradient-to-r from-primary-50 to-blue-50 rounded-2xl p-6 border border-primary-200">
             <div className="flex items-center justify-between mb-4">
@@ -579,7 +600,11 @@ const CarModelPage: React.FC<CarModelPageProps> = ({ carData }) => {
       </section>
 
       {/* 8. Model Price Section */}
-      <section className="bg-gray-50 px-4 py-8">
+      <section 
+        id="model-price" 
+        ref={(el) => { sectionRefs.current['model-price'] = el }}
+        className="bg-gray-50 px-4 py-8"
+      >
         <div className="max-w-7xl mx-auto">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             {carData.brand} {carData.model} Price
@@ -1258,7 +1283,129 @@ const CarModelPage: React.FC<CarModelPageProps> = ({ carData }) => {
         </div>
       </section>
 
-      {/* 24. Feedback Section */}
+      {/* 22. Warranty & Service Section */}
+      <section 
+        id="warranty" 
+        ref={(el) => { sectionRefs.current['warranty'] = el }}
+        className="bg-white px-4 py-8"
+      >
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Warranty & Service</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+              <Shield className="h-12 w-12 text-primary-600 mb-4" />
+              <h3 className="font-bold text-gray-900 mb-2">Standard Warranty</h3>
+              <p className="text-gray-600 mb-4">2 Years / 40,000 km comprehensive warranty</p>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>• Engine & Transmission</li>
+                <li>• Electrical Components</li>
+                <li>• Paint & Body</li>
+              </ul>
+            </div>
+            
+            <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+              <Settings className="h-12 w-12 text-primary-600 mb-4" />
+              <h3 className="font-bold text-gray-900 mb-2">Service Network</h3>
+              <p className="text-gray-600 mb-4">1000+ authorized service centers across India</p>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>• Express Service</li>
+                <li>• 24x7 Roadside Assistance</li>
+                <li>• Genuine Spare Parts</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 23. Offers & Discounts Section */}
+      <section 
+        id="offers" 
+        ref={(el) => { sectionRefs.current['offers'] = el }}
+        className="bg-gradient-to-r from-orange-50 to-red-50 px-4 py-8"
+      >
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Current Offers & Discounts</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white rounded-lg p-6 border-2 border-orange-200">
+              <Tag className="h-8 w-8 text-orange-600 mb-3" />
+              <h3 className="font-bold text-gray-900 mb-2">Cash Discount</h3>
+              <p className="text-2xl font-bold text-orange-600 mb-2">₹25,000</p>
+              <p className="text-sm text-gray-600">Valid till March 2024</p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 border-2 border-blue-200">
+              <ExternalLink className="h-8 w-8 text-blue-600 mb-3" />
+              <h3 className="font-bold text-gray-900 mb-2">Exchange Bonus</h3>
+              <p className="text-2xl font-bold text-blue-600 mb-2">₹15,000</p>
+              <p className="text-sm text-gray-600">Additional on old car exchange</p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 border-2 border-green-200">
+              <Award className="h-8 w-8 text-green-600 mb-3" />
+              <h3 className="font-bold text-gray-900 mb-2">Finance Offer</h3>
+              <p className="text-2xl font-bold text-green-600 mb-2">7.99%</p>
+              <p className="text-sm text-gray-600">Interest rate starting from</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 24. Ownership Costs Section */}
+      <section 
+        id="ownership" 
+        ref={(el) => { sectionRefs.current['ownership'] = el }}
+        className="bg-gray-50 px-4 py-8"
+      >
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Ownership Costs</h2>
+          
+          <div className="bg-white rounded-lg p-6 border border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
+              <div>
+                <IndianRupee className="h-8 w-8 text-primary-600 mx-auto mb-2" />
+                <h3 className="font-semibold text-gray-900 mb-1">Service Cost</h3>
+                <p className="text-lg font-bold text-primary-600">₹3,500</p>
+                <p className="text-sm text-gray-600">per service</p>
+              </div>
+              
+              <div>
+                <Fuel className="h-8 w-8 text-primary-600 mx-auto mb-2" />
+                <h3 className="font-semibold text-gray-900 mb-1">Fuel Cost</h3>
+                <p className="text-lg font-bold text-primary-600">₹4.2</p>
+                <p className="text-sm text-gray-600">per km</p>
+              </div>
+              
+              <div>
+                <Shield className="h-8 w-8 text-primary-600 mx-auto mb-2" />
+                <h3 className="font-semibold text-gray-900 mb-1">Insurance</h3>
+                <p className="text-lg font-bold text-primary-600">₹45,000</p>
+                <p className="text-sm text-gray-600">per year</p>
+              </div>
+              
+              <div>
+                <TrendingUp className="h-8 w-8 text-primary-600 mx-auto mb-2" />
+                <h3 className="font-semibold text-gray-900 mb-1">Resale Value</h3>
+                <p className="text-lg font-bold text-primary-600">65%</p>
+                <p className="text-sm text-gray-600">after 3 years</p>
+              </div>
+            </div>
+            
+            <div className="mt-6 pt-6 border-t border-gray-200 text-center">
+              <Link
+                href="/price-breakup"
+                className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-colors inline-flex items-center space-x-2"
+              >
+                <Calculator className="h-5 w-5" />
+                <span>Calculate Total Cost</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 25. Feedback Section */}
       <section className="bg-white px-4 py-8">
         <div className="max-w-3xl mx-auto">
           <div className="bg-gray-50 rounded-lg p-8 border border-gray-200">
