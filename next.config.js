@@ -22,9 +22,18 @@ const nextConfig = {
             key: 'Cache-Control',
             value: 'no-cache, no-store, must-revalidate',
           },
+          {
+            key: 'X-Frame-Options',
+            value: 'ALLOWALL',
+          },
         ],
       },
     ];
+  },
+  // Configure for Replit proxy environment
+  // Disable host checking for Replit iframe
+  devIndicators: {
+    buildActivity: false,
   },
 };
 
