@@ -2,310 +2,163 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { 
-  ChevronLeft, ChevronRight, Heart, Share, Star, ChevronDown, Search, MapPin, Menu,
-  Calculator, IndianRupee, TrendingUp, Calendar, Clock, User, Tag, Eye, MessageCircle,
-  Play, ThumbsUp, ThumbsDown, Phone, Mail, Send, BookOpen, Award, Shield, Fuel,
-  Gauge, Users, Package, Zap, Settings, Info, ExternalLink, Filter, Grid, List
-} from 'lucide-react'
+import { Heart, Star, Share2, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import Footer from '../Footer'
-import StickyNavigation from './StickyNavigation'
-import CarEMISection from './CarEMISection'
-import ModelHighlights from './ModelHighlights'
-import VariantSection from './VariantSection'
-import ModelColors from './ModelColors'
-import ProsConsSection from './ProsConsSection'
+import ColorOptions from './ColorOptions'
+import ProsAndCons from './ProsAndCons'
+import ModelSummarySection from './ModelSummarySection'
+import EngineHighlightsSection from './EngineHighlightsSection'
+import MileageInformation from './MileageInformation'
+import SimilarCarsSection from './SimilarCarsSection'
+import CarComparisonSection from './CarComparisonSection'
+import ModelNewsSection from './ModelNewsSection'
+import YouTubeVideosSection from './YouTubeVideosSection'
+import FAQSection from './FAQSection'
+import UserReviewsSection from './UserReviewsSection'
+import UpcomingCarsSection from './UpcomingCarsSection'
+import NewLaunchesSection from './NewLaunchesSection'
+import ConsultancyAdSection from './ConsultancyAdSection'
+import FeedbackSection from './FeedbackSection'
 
-interface CarData {
-  brand: string
-  model: string
-  fullName: string
-  startingPrice: number
-  endingPrice: number
-  rating: number
-  reviewCount: number
-  launchYear: number
-  description: string
-  images: string[]
-  specifications: {
-    engine: string
-    power: string
-    torque: string
-    transmission: string
-    fuelType: string
-    mileage: string
-    seatingCapacity: number
-    groundClearance: string
-    safetyRating: string
-    airbags: number
-    abs: boolean
-  }
-  colors: Array<{
-    id: string
-    name: string
-    hexCode: string
-    popular: boolean
-  }>
-  pros: string[]
-  cons: string[]
-  mileage: {
-    city: string
-    highway: string
-    combined: string
-  }
+// Mock data
+const mockCarData = {
+  name: "Renault Kwid",
+  brand: "Renault",
+  rating: 4.2,
+  reviewCount: 1234,
+  description: "The Renault Kwid is a compact hatchback that offers excellent fuel efficiency, modern features, and a spacious interior. Perfect for city driving with its compact dimensions and easy maneuverability.",
+  priceRange: "₹4.64 - ₹6.45 Lakh",
+  images: [
+    "/api/placeholder/800/600",
+    "/api/placeholder/800/600", 
+    "/api/placeholder/800/600",
+    "/api/placeholder/800/600"
+  ],
+  colors: [
+    {
+      name: "Ferrari Red",
+      image: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&h=400&fit=crop&auto=format",
+      colorCode: "#DC143C"
+    },
+    {
+      name: "Moonlight Silver",
+      image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&h=400&fit=crop&auto=format",
+      colorCode: "#C0C0C0"
+    },
+    {
+      name: "Fiery Red",
+      image: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&h=400&fit=crop&auto=format",
+      colorCode: "#DC143C"
+    },
+    {
+      name: "Pearl White",
+      image: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600&h=400&fit=crop&auto=format",
+      colorCode: "#F8F8FF"
+    },
+    {
+      name: "Midnight Black",
+      image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&h=400&fit=crop&auto=format",
+      colorCode: "#000000"
+    }
+  ],
+  variants: [
+    { id: 1, name: "Sigma", price: 619000 },
+    { id: 2, name: "Delta", price: 720000 },
+    { id: 3, name: "Zeta", price: 890000 },
+    { id: 4, name: "Alpha", price: 1250000 }
+  ],
+  cities: [
+    { id: 1, name: "Delhi" },
+    { id: 2, name: "Mumbai" },
+    { id: 3, name: "Bangalore" },
+    { id: 4, name: "Chennai" }
+  ]
 }
 
-interface CarModelPageProps {
-  carData: CarData
-}
+const navigationSections = [
+  { id: 'overview', label: 'Overview' },
+  { id: '360-view', label: '360° View' },
+  { id: 'variants', label: 'Variants' },
+  { id: 'offers', label: 'Offers' },
+  { id: 'expert-review', label: 'Expert Review' }
+]
 
-const CarModelPage: React.FC<CarModelPageProps> = ({ carData }) => {
-  const [activeSection, setActiveSection] = useState('hero')
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+const CarModelPage = () => {
+  const [activeSection, setActiveSection] = useState('overview')
   const [isLiked, setIsLiked] = useState(false)
   const [showFullDescription, setShowFullDescription] = useState(false)
-  const [selectedVariant, setSelectedVariant] = useState('')
-  const [selectedCity, setSelectedCity] = useState('Delhi')
-  const [highlightsTab, setHighlightsTab] = useState('key-features')
-  const [variantFilter, setVariantFilter] = useState('all')
-  const [showAllVariants, setShowAllVariants] = useState(false)
-  const [showFullNews, setShowFullNews] = useState(false)
-  const [showFullVideos, setShowFullVideos] = useState(false)
-  const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null)
-  const sectionRefs = useRef<{[key: string]: HTMLElement | null}>({})
+  const [selectedVariant, setSelectedVariant] = useState(mockCarData.variants[0])
+  const [selectedCity, setSelectedCity] = useState(mockCarData.cities[0])
+  const [showVariantDropdown, setShowVariantDropdown] = useState(false)
+  const [showCityDropdown, setShowCityDropdown] = useState(false)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [currentColorIndex, setCurrentColorIndex] = useState(0)
 
-  // Navigation sections for sticky header
-  const navigationSections = [
-    { id: 'hero', label: 'Overview' },
-    { id: 'pricing', label: 'Price' },
-    { id: 'specifications', label: 'Specs' },
-    { id: 'variants', label: 'Variants' },
-    { id: 'emi', label: 'EMI' },
-    { id: 'highlights', label: 'Features' },
-    { id: 'model-price', label: 'Model Price' },
-    { id: 'colors', label: 'Colors' },
-    { id: 'pros-cons', label: 'Pros & Cons' },
-    { id: 'summary', label: 'Summary' },
-    { id: 'engine', label: 'Engine' },
-    { id: 'mileage', label: 'Mileage' },
-    { id: 'similar-cars', label: 'Similar Cars' },
-    { id: 'compare', label: 'Compare' },
-    { id: 'news', label: 'News' },
-    { id: 'videos', label: 'Videos' },
-    { id: 'faq', label: 'FAQ' },
-    { id: 'reviews', label: 'Reviews' },
-    { id: 'upcoming', label: 'Upcoming' },
-    { id: 'new-launches', label: 'New Cars' },
-    { id: 'consultation', label: 'Consult' },
-    { id: 'warranty', label: 'Warranty' },
-    { id: 'offers', label: 'Offers' },
-    { id: 'ownership', label: 'Ownership' },
-    { id: 'feedback', label: 'Feedback' }
-  ]
+  // Refs
+  const variantDropdownRef = useRef<HTMLDivElement>(null)
+  const cityDropdownRef = useRef<HTMLDivElement>(null)
 
-  // Auto-rotate images
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % carData.images.length)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [carData.images.length])
-
-  // Scroll spy for active section
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 100
-
-      for (const section of navigationSections) {
-        const element = sectionRefs.current[section.id]
-        if (element) {
-          const { offsetTop, offsetHeight } = element
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section.id)
-            break
-          }
-        }
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  // Mock data for various sections
-  const cities = ['Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Hyderabad', 'Pune', 'Kolkata']
-  
-  const variants = [
-    {
-      id: 1,
-      name: 'LXI',
-      fuelType: 'petrol',
-      transmission: 'Manual',
-      power: '86 Bhp',
-      price: '8.00',
-      features: 'Dual Airbags, ABS with EBD, Reverse Parking Sensors',
-      isAutomatic: false
-    },
-    {
-      id: 2,
-      name: 'VXI',
-      fuelType: 'petrol', 
-      transmission: 'Manual',
-      power: '86 Bhp',
-      price: '9.25',
-      features: 'Touchscreen Infotainment, Steering Mounted Controls',
-      isAutomatic: false
-    },
-    {
-      id: 3,
-      name: 'ZXI+ AMT',
-      fuelType: 'petrol',
-      transmission: 'AMT',
-      power: '86 Bhp',
-      price: '11.75',
-      features: 'AMT Transmission, Reverse Camera, Climate Control',
-      isAutomatic: true
-    }
-  ]
-
-  const highlights = {
-    'key-features': [
-      { title: 'Advanced Safety Features', image: '/images/safety.jpg' },
-      { title: 'Premium Interior', image: '/images/interior.jpg' },
-      { title: 'Touchscreen Infotainment', image: '/images/touchscreen.jpg' },
-      { title: 'Climate Control', image: '/images/climate.jpg' },
-      { title: 'Alloy Wheels', image: '/images/wheels.jpg' },
-      { title: 'LED Headlights', image: '/images/headlights.jpg' }
-    ],
-    'space-comfort': [
-      { title: 'Spacious Cabin', image: '/images/cabin.jpg' },
-      { title: 'Comfortable Seating', image: '/images/seats.jpg' },
-      { title: 'Ample Legroom', image: '/images/legroom.jpg' },
-      { title: 'Premium Upholstery', image: '/images/upholstery.jpg' }
-    ],
-    'storage-convenience': [
-      { title: 'Large Boot Space', image: '/images/boot.jpg' },
-      { title: 'Multiple Storage', image: '/images/storage.jpg' },
-      { title: 'Cup Holders', image: '/images/cups.jpg' },
-      { title: 'Door Pockets', image: '/images/pockets.jpg' }
-    ]
-  }
-
-  const newsArticles = [
-    {
-      id: 1,
-      title: `${carData.brand} ${carData.model} 2024 Review: Complete Analysis`,
-      excerpt: 'Our comprehensive review of the latest model with detailed analysis.',
-      author: 'Auto Expert',
-      publishedAt: '15/01/2024',
-      readTime: 8,
-      category: 'review'
-    },
-    {
-      id: 2,
-      title: `${carData.brand} ${carData.model} vs Competition: Which is Better?`,
-      excerpt: 'Detailed comparison with similar cars in the segment.',
-      author: 'Car Guru',
-      publishedAt: '10/01/2024',
-      readTime: 6,
-      category: 'comparison'
-    }
-  ]
-
-  const videos = [
-    {
-      id: 1,
-      title: `${carData.brand} ${carData.model} Test Drive Review`,
-      thumbnail: '/video-thumbs/test-drive.jpg',
-      duration: '12:45',
-      views: '1.2M'
-    },
-    {
-      id: 2,
-      title: `${carData.brand} ${carData.model} Interior & Exterior Walkaround`,
-      thumbnail: '/video-thumbs/walkaround.jpg',
-      duration: '8:30',
-      views: '856K'
-    }
-  ]
-
-  const faqs = [
-    {
-      id: 1,
-      question: `What is the starting price of ${carData.brand} ${carData.model}?`,
-      answer: `The ${carData.brand} ${carData.model} starts at ₹${(carData.startingPrice / 100000).toFixed(2)} Lakh (ex-showroom).`
-    },
-    {
-      id: 2,
-      question: `What is the mileage of ${carData.brand} ${carData.model}?`,
-      answer: `The ${carData.brand} ${carData.model} delivers a mileage of ${carData.specifications.mileage}.`
-    },
-    {
-      id: 3,
-      question: `How many variants are available?`,
-      answer: `The ${carData.brand} ${carData.model} is available in ${variants.length} variants across different fuel types and transmissions.`
-    }
-  ]
-
-  const userReviews = [
-    {
-      id: 1,
-      author: 'Rajesh Kumar',
-      location: 'Mumbai',
-      rating: 4.5,
-      title: 'Excellent car for city driving',
-      review: 'Great fuel efficiency and comfortable interiors. Perfect for daily commute.',
-      date: '2024-01-20',
-      helpful: 12,
-      verified: true
-    },
-    {
-      id: 2,
-      author: 'Priya Sharma',
-      location: 'Delhi',
-      rating: 4.0,
-      title: 'Value for money',
-      review: 'Good features at this price point. Service network is excellent.',
-      date: '2024-01-18',
-      helpful: 8,
-      verified: true
-    }
-  ]
-
+  // Format price helper
   const formatPrice = (price: number) => {
     return `₹${(price / 100000).toFixed(2)} Lakh`
   }
 
-  // Filter variants based on selected filter
-  const filteredVariants = variants.filter(variant => {
-    if (variantFilter === 'all') return true
-    if (variantFilter === 'automatic') return variant.isAutomatic
-    if (variantFilter === 'petrol') return variant.fuelType === 'petrol'
-    if (variantFilter === 'diesel') return variant.fuelType === 'diesel'
-    return variant.fuelType === variantFilter
-  })
+  // Handle scroll for sticky navigation
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 100)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (variantDropdownRef.current && !variantDropdownRef.current.contains(event.target as Node)) {
+        setShowVariantDropdown(false)
+      }
+      if (cityDropdownRef.current && !cityDropdownRef.current.contains(event.target as Node)) {
+        setShowCityDropdown(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // Image navigation
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % mockCarData.images.length)
+  }
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + mockCarData.images.length) % mockCarData.images.length)
+  }
+
+  // Smooth scroll to section
   const scrollToSection = (sectionId: string) => {
-    const element = sectionRefs.current[sectionId]
+    setActiveSection(sectionId)
+    const element = document.getElementById(sectionId)
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      element.scrollIntoView({ behavior: 'smooth' })
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* 1. Top Ribbon (Sticky Navigation Bar) */}
-      <div className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+    <div className="min-h-screen bg-white">
+      {/* Sticky Navigation */}
+      <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center space-x-8 overflow-x-auto scrollbar-hide py-3">
+          <div className="flex space-x-8">
             {navigationSections.map((section) => (
               <button
                 key={section.id}
                 onClick={() => scrollToSection(section.id)}
-                className={`whitespace-nowrap text-sm font-medium transition-colors ${
+                className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
                   activeSection === section.id
-                    ? 'text-primary-600 border-b-2 border-primary-600 pb-2'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
                 {section.label}
@@ -315,1157 +168,992 @@ const CarModelPage: React.FC<CarModelPageProps> = ({ carData }) => {
         </div>
       </div>
 
-      {/* 2. Hero Section (Car Box Image) */}
-      <section 
-        id="hero" 
-        ref={(el) => { sectionRefs.current['hero'] = el }}
-        className="bg-gradient-to-br from-blue-50 to-indigo-100 relative overflow-hidden"
-      >
-        {/* Share Button */}
-        <button className="absolute top-4 right-4 z-20 bg-white/90 hover:bg-white rounded-lg p-3 transition-all duration-300 shadow-md">
-          <Share className="h-5 w-5 text-gray-700" />
-        </button>
-
-        {/* Navigation Arrows */}
-        <button 
-          onClick={() => setCurrentImageIndex((prev) => prev === 0 ? carData.images.length - 1 : prev - 1)}
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/90 hover:bg-white rounded-full p-3 transition-all duration-300 shadow-md"
-        >
-          <ChevronLeft className="h-6 w-6 text-gray-600" />
-        </button>
-        
-        <button 
-          onClick={() => setCurrentImageIndex((prev) => (prev + 1) % carData.images.length)}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/90 hover:bg-white rounded-full p-3 transition-all duration-300 shadow-md"
-        >
-          <ChevronRight className="h-6 w-6 text-gray-600" />
-        </button>
-
-        {/* Car Image Container */}
-        <div className="relative h-96 flex items-center justify-center px-8 py-8">
-          <div className="relative z-10 max-w-4xl w-full">
-            <img
-              src={carData.images[currentImageIndex] || "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&h=500&fit=crop&auto=format"}
-              alt={carData.fullName}
-              className="w-full h-auto object-contain drop-shadow-2xl"
-            />
-          </div>
-        </div>
-
-        {/* Car Details Below Hero */}
-        <div className="bg-white px-4 py-6 md:py-8">
-          <div className="max-w-7xl mx-auto">
-            {/* Car Title and Heart */}
-            <div className="flex items-start justify-between mb-4 md:mb-6">
-              <div>
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-2">
-                  {carData.fullName}
-                </h1>
-              </div>
-              <button
-                onClick={() => setIsLiked(!isLiked)}
-                className={`p-2 md:p-3 rounded-full transition-all duration-300 ${
-                  isLiked ? 'text-red-500' : 'text-gray-400 hover:text-gray-600'
-                }`}
-              >
-                <Heart className={`h-6 w-6 md:h-8 md:w-8 ${isLiked ? 'fill-current' : ''}`} />
-              </button>
-            </div>
-
-            {/* Rating Section */}
-            <div className="flex items-center space-x-4 mb-4 md:mb-6">
-              <div className="flex items-center bg-primary-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg">
-                <Star className="h-4 w-4 md:h-5 md:w-5 fill-current mr-1.5 md:mr-2" />
-                <span className="font-bold text-base md:text-lg">{carData.rating}</span>
-                <span className="text-xs md:text-sm ml-1.5 md:ml-2">({carData.reviewCount})</span>
-              </div>
-              <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1.5 md:px-6 md:py-2 rounded-lg font-medium transition-colors text-sm md:text-base">
-                Rate & Review
-              </button>
-            </div>
-
-            {/* Description */}
-            <div className="mb-6 md:mb-8">
-              <p className="text-gray-700 leading-relaxed text-sm md:text-base">
-                {showFullDescription ? carData.description : carData.description.substring(0, 150)}
-                {carData.description.length > 150 && (
-                  <button
-                    onClick={() => setShowFullDescription(!showFullDescription)}
-                    className="text-blue-500 hover:text-blue-600 font-medium ml-2 transition-colors text-sm md:text-base"
-                  >
-                    {showFullDescription ? '...less' : '...more'}
-                  </button>
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Pricing Section */}
-      <section 
-        id="pricing" 
-        ref={(el) => { sectionRefs.current['pricing'] = el }}
-        className="bg-white px-4 py-6 md:py-8 border-b border-gray-200"
-      >
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                {carData.brand} {carData.model} Price
-              </h2>
-              <div className="flex items-center space-x-2">
-                <span className="text-2xl md:text-3xl lg:text-4xl font-bold text-green-600">
-                  {formatPrice(carData.startingPrice)} - {formatPrice(carData.endingPrice)}
-                </span>
-                <span className="text-sm text-gray-500">*Ex-showroom</span>
+      {/* Main Content */}
+      <div>
+        {/* Section 1: Overview */}
+        <section id="overview" className="bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {/* Hero Car Image */}
+            <div className="relative mb-6">
+              <div className="aspect-[16/9] bg-gradient-to-br from-orange-300 via-yellow-300 to-orange-400 rounded-lg overflow-hidden relative">
+                <img
+                  src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&h=500&fit=crop&auto=format"
+                  alt="Red Ferrari F40 sports car"
+                  className="w-full h-full object-contain"
+                />
               </div>
             </div>
-            <Link
-              href="/price-breakup"
-              className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors text-sm md:text-base lg:text-lg"
-            >
-              Get On-Road Price
-            </Link>
-          </div>
-        </div>
-      </section>
 
-      {/* 4. Variants & City Selector */}
-      <section className="bg-gray-50 px-4 py-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            <div className="relative">
-              <select 
-                value={selectedVariant}
-                onChange={(e) => setSelectedVariant(e.target.value)}
-                className="w-full bg-white border-2 border-gray-300 rounded-xl px-4 py-3 md:px-6 md:py-4 text-gray-700 font-medium text-sm md:text-base appearance-none focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all duration-300 cursor-pointer hover:border-gray-400"
-              >
-                <option value="">Choose Variant</option>
-                {variants.map((variant) => (
-                  <option key={variant.id} value={variant.name}>
-                    {variant.name} - ₹{variant.price} Lakh
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 md:right-4 top-1/2 transform -translate-y-1/2 h-5 w-5 md:h-6 md:w-6 text-primary-500 pointer-events-none" />
-            </div>
-
-            <div className="relative">
-              <select
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
-                className="w-full bg-white border-2 border-gray-300 rounded-xl px-4 py-3 md:px-6 md:py-4 text-gray-700 font-medium text-sm md:text-base appearance-none focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all duration-300 cursor-pointer hover:border-gray-400"
-              >
-                {cities.map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 md:right-4 top-1/2 transform -translate-y-1/2 h-5 w-5 md:h-6 md:w-6 text-primary-500 pointer-events-none" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. EMI Box */}
-      <section 
-        id="emi" 
-        ref={(el) => { sectionRefs.current['emi'] = el }}
-        className="bg-white px-4 py-6"
-      >
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-gradient-to-r from-primary-50 to-blue-50 rounded-2xl p-6 border border-primary-200">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center">
-                  <Calculator className="h-6 w-6 text-white" />
-                </div>
+            {/* Car Details */}
+            <div className="space-y-6">
+              {/* Brand and Model with Heart */}
+              <div className="flex items-start justify-between">
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">EMI Calculator</h3>
-                  <p className="text-sm text-gray-600">Starting EMI from</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-2xl md:text-3xl font-bold text-primary-600">₹12,500</p>
-                <p className="text-sm text-gray-600">per month</p>
-              </div>
-            </div>
-            
-            <Link
-              href="/emi-calculator"
-              className="w-full bg-primary-600 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center space-x-2 hover:bg-primary-700 transition-colors"
-            >
-              <Calculator className="w-5 h-5" />
-              <span>Calculate EMI</span>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. Key Specifications */}
-      <section 
-        id="specifications" 
-        ref={(el) => { sectionRefs.current['specifications'] = el }}
-        className="bg-gray-50 px-4 py-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            {carData.brand} {carData.model} Key Specifications
-          </h2>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
-              <Zap className="h-8 w-8 text-primary-600 mx-auto mb-2" />
-              <p className="text-xs text-gray-500 mb-1">Engine</p>
-              <p className="font-semibold text-sm">{carData.specifications.engine}</p>
-            </div>
-            
-            <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
-              <Gauge className="h-8 w-8 text-primary-600 mx-auto mb-2" />
-              <p className="text-xs text-gray-500 mb-1">Power</p>
-              <p className="font-semibold text-sm">{carData.specifications.power}</p>
-            </div>
-            
-            <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
-              <Settings className="h-8 w-8 text-primary-600 mx-auto mb-2" />
-              <p className="text-xs text-gray-500 mb-1">Torque</p>
-              <p className="font-semibold text-sm">{carData.specifications.torque}</p>
-            </div>
-            
-            <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
-              <Users className="h-8 w-8 text-primary-600 mx-auto mb-2" />
-              <p className="text-xs text-gray-500 mb-1">Seating</p>
-              <p className="font-semibold text-sm">{carData.specifications.seatingCapacity}</p>
-            </div>
-            
-            <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
-              <Fuel className="h-8 w-8 text-primary-600 mx-auto mb-2" />
-              <p className="text-xs text-gray-500 mb-1">Mileage</p>
-              <p className="font-semibold text-sm">{carData.specifications.mileage}</p>
-            </div>
-            
-            <div className="bg-white p-4 rounded-lg border border-gray-200 text-center">
-              <Shield className="h-8 w-8 text-primary-600 mx-auto mb-2" />
-              <p className="text-xs text-gray-500 mb-1">Safety</p>
-              <p className="font-semibold text-sm">{carData.specifications.safetyRating}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 7. Model Highlights (Scrollable Grid) */}
-      <section 
-        id="highlights" 
-        ref={(el) => { sectionRefs.current['highlights'] = el }}
-        className="bg-white px-4 py-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            {carData.brand} {carData.model} Highlights
-          </h2>
-          
-          {/* Highlights Tabs */}
-          <div className="flex space-x-4 mb-6 border-b border-gray-200">
-            {Object.keys(highlights).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setHighlightsTab(tab)}
-                className={`py-2 px-4 font-medium text-sm transition-colors ${
-                  highlightsTab === tab
-                    ? 'text-primary-600 border-b-2 border-primary-600'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                {tab.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' & ')}
-              </button>
-            ))}
-          </div>
-          
-          {/* Scrollable Grid */}
-          <div className="overflow-x-auto">
-            <div className="flex space-x-4 pb-4">
-              {highlights[highlightsTab as keyof typeof highlights].map((item, index) => (
-                <div key={index} className="flex-shrink-0 w-48 bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <div className="h-32 bg-gradient-to-br from-gray-300 to-gray-400 rounded-lg mb-3 flex items-center justify-center">
-                    <Package className="h-12 w-12 text-white" />
+                  <h1 className="text-2xl font-bold text-gray-900 mb-3">
+                    {mockCarData.brand} {mockCarData.name}
+                  </h1>
+                  
+                  {/* Rating */}
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="flex items-center bg-blue-600 text-white px-3 py-1.5 rounded-lg">
+                      <Star className="w-4 h-4 mr-1 fill-current" />
+                      <span className="font-semibold">{mockCarData.rating}</span>
+                      <span className="ml-1">({mockCarData.reviewCount})</span>
+                    </div>
+                    <button className="bg-blue-100 text-blue-600 px-4 py-1.5 rounded-lg font-medium hover:bg-blue-200 transition-colors">
+                      Rate & Review
+                    </button>
                   </div>
-                  <h4 className="font-semibold text-sm text-gray-900">{item.title}</h4>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 8. Model Price Section */}
-      <section 
-        id="model-price" 
-        ref={(el) => { sectionRefs.current['model-price'] = el }}
-        className="bg-gray-50 px-4 py-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            {carData.brand} {carData.model} Price
-          </h2>
-          
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <p className="text-gray-700 leading-relaxed">
-              The {carData.fullName} is available in {variants.length} variants with prices ranging from {formatPrice(carData.startingPrice)} to {formatPrice(carData.endingPrice)} (ex-showroom). The vehicle offers excellent value for money with premium features and reliable performance across all variants.
-              {!showFullDescription && (
+                
                 <button
-                  onClick={() => setShowFullDescription(true)}
-                  className="text-primary-600 hover:text-primary-700 font-medium ml-2"
-                >
-                  Read More
-                </button>
-              )}
-            </p>
-            
-            {showFullDescription && (
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <p className="text-gray-700 leading-relaxed">
-                  Each variant comes with unique features and specifications tailored to different customer needs. The base variant offers essential features while the top variant includes premium amenities like advanced infotainment system, enhanced safety features, and superior comfort options.
-                </p>
-                <button
-                  onClick={() => setShowFullDescription(false)}
-                  className="text-primary-600 hover:text-primary-700 font-medium mt-2"
-                >
-                  Show Less
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* 9. Variants Section */}
-      <section 
-        id="variants" 
-        ref={(el) => { sectionRefs.current['variants'] = el }}
-        className="bg-white px-4 py-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">
-              {carData.brand} {carData.model} Variants
-            </h2>
-            
-            {/* Filter Buttons */}
-            <div className="flex space-x-2">
-              {['all', 'petrol', 'diesel', 'automatic'].map((filter) => (
-                <button
-                  key={filter}
-                  onClick={() => setVariantFilter(filter)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                    variantFilter === filter
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  onClick={() => setIsLiked(!isLiked)}
+                  className={`p-2 transition-colors ${
+                    isLiked ? 'text-red-600' : 'text-gray-400 hover:text-red-600'
                   }`}
                 >
-                  {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                  <Heart className={`w-6 h-6 ${isLiked ? 'fill-current' : ''}`} />
                 </button>
-              ))}
+              </div>
+
+              {/* Description */}
+              <div>
+                <p className="text-gray-600 leading-relaxed">
+                  {showFullDescription 
+                    ? mockCarData.description + " ...more detailed information about the vehicle's features, performance, and specifications."
+                    : mockCarData.description
+                  }
+                  <button
+                    onClick={() => setShowFullDescription(!showFullDescription)}
+                    className="text-blue-600 hover:text-blue-700 font-medium ml-1"
+                  >
+                    {showFullDescription ? 'less' : '...more'}
+                  </button>
+                </p>
+              </div>
+
+              {/* Price Display */}
+              <div className="mb-6">
+                <div className="text-2xl font-bold text-green-600 mb-1">
+                  {mockCarData.priceRange}
+                </div>
+                <div className="text-sm text-gray-600 mb-4">*Ex-showroom</div>
+                <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                  Get On-Road Price
+                </button>
+              </div>
+
+              {/* Variant and City Selection */}
+              <div className="space-y-4">
+                {/* Variant Selector */}
+                <div className="relative" ref={variantDropdownRef}>
+                  <button
+                    onClick={() => setShowVariantDropdown(!showVariantDropdown)}
+                    className="w-full flex items-center justify-between p-4 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors bg-white"
+                  >
+                    <div className="text-left">
+                      <p className="text-gray-600 font-medium">Choose Variant</p>
+                    </div>
+                    <ChevronDown className={`w-5 h-5 text-blue-600 transition-transform ${showVariantDropdown ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {showVariantDropdown && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+                      {mockCarData.variants.map((variant) => (
+                        <button
+                          key={variant.id}
+                          onClick={() => {
+                            setSelectedVariant(variant)
+                            setShowVariantDropdown(false)
+                          }}
+                          className="w-full text-left p-4 hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg border-b border-gray-100 last:border-b-0"
+                        >
+                          <p className="font-medium text-gray-900">{variant.name}</p>
+                          <p className="text-sm text-gray-600">{formatPrice(variant.price)}</p>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* City Selector */}
+                <div className="relative" ref={cityDropdownRef}>
+                  <button
+                    onClick={() => setShowCityDropdown(!showCityDropdown)}
+                    className="w-full flex items-center justify-between p-4 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors bg-white"
+                  >
+                    <div className="text-left">
+                      <p className="text-gray-600 font-medium">{selectedCity.name}</p>
+                    </div>
+                    <ChevronDown className={`w-5 h-5 text-blue-600 transition-transform ${showCityDropdown ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {showCityDropdown && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+                      {mockCarData.cities.map((city) => (
+                        <button
+                          key={city.id}
+                          onClick={() => {
+                            setSelectedCity(city)
+                            setShowCityDropdown(false)
+                          }}
+                          className="w-full text-left p-4 hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg border-b border-gray-100 last:border-b-0"
+                        >
+                          <p className="font-medium text-gray-900">{city.name}</p>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-          
-          <div className="grid gap-4">
-            {(showAllVariants ? filteredVariants : filteredVariants.slice(0, 2)).map((variant) => (
-              <div key={variant.id} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">
-                      {carData.brand} {carData.model} {variant.name}
-                    </h3>
-                    <div className="flex items-center space-x-4 text-sm text-gray-600">
-                      <span>{variant.fuelType}</span>
-                      <span>{variant.transmission}</span>
-                      <span>{variant.power}</span>
+        </section>
+
+        {/* Section 2: EMI Calculator */}
+        <section id="emi-calculator" className="bg-gray-50 py-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-lg mx-auto">
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                {/* Kotak Logo and Bank Name */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center">
+                    <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center mr-3">
+                      <span className="text-white text-lg font-bold">K</span>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900">kotak</h3>
+                      <p className="text-gray-500 text-sm">Mahindra Bank</p>
                     </div>
                   </div>
+                  
+                  {/* EMI Amount Display */}
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-primary-600">₹{variant.price} Lakh</p>
-                    <p className="text-sm text-gray-500">Ex-showroom</p>
+                    <p className="text-gray-500 text-sm">Starting EMI</p>
+                    <p className="text-2xl font-bold text-gray-900">₹12,700</p>
+                    <p className="text-gray-500 text-sm">per month</p>
                   </div>
                 </div>
-                
-                <p className="text-sm text-gray-700 mb-4">{variant.features}</p>
-                
-                <div className="flex space-x-3">
-                  <Link
-                    href="/variant"
-                    className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                  >
-                    View Details
-                  </Link>
-                  <Link
-                    href="/price-breakup"
-                    className="bg-white hover:bg-gray-50 text-gray-900 px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium transition-colors"
-                  >
-                    Get Price
-                  </Link>
-                </div>
+
+                {/* Calculate EMI Button */}
+                <button className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-full transition-colors flex items-center justify-center space-x-2">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  <span>Calculate EMI</span>
+                </button>
               </div>
-            ))}
+            </div>
           </div>
-          
-          {filteredVariants.length > 2 && !showAllVariants && (
-            <div className="text-center mt-6">
-              <button
-                onClick={() => setShowAllVariants(true)}
-                className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-              >
-                View All {filteredVariants.length} Variants
+        </section>
+
+        {/* Section 3: Model Highlights */}
+        <section id="highlights" className="bg-white py-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Title */}
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Renault Kwid Highlights</h2>
+            
+            {/* Category Tabs */}
+            <div className="flex space-x-8 mb-6 border-b border-gray-200">
+              <button className="pb-3 px-1 border-b-2 border-blue-600 text-blue-600 font-medium">
+                Key & Features
+              </button>
+              <button className="pb-3 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                Space & Comfort
+              </button>
+              <button className="pb-3 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                Storage & Convenience
               </button>
             </div>
-          )}
-        </div>
-      </section>
 
-      {/* 10. Model Colors */}
-      <section 
-        id="colors" 
-        ref={(el) => { sectionRefs.current['colors'] = el }}
-        className="bg-gray-50 px-4 py-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            {carData.brand} {carData.model} Colors
-          </h2>
-          
-          <div className="overflow-x-auto">
-            <div className="flex space-x-6 pb-4">
-              {carData.colors.map((color) => (
-                <div key={color.id} className="flex-shrink-0 text-center">
-                  <div className="relative mb-3">
-                    <div className="w-24 h-24 rounded-full border-4 border-gray-200 mb-2 overflow-hidden">
-                      <div 
-                        className="w-full h-full"
-                        style={{ backgroundColor: color.hexCode }}
-                      ></div>
+            {/* Horizontal Scrollable Grid */}
+            <div className="overflow-x-auto">
+              <div className="flex space-x-4 pb-4">
+                {/* Feature Card 1 */}
+                <div className="flex-shrink-0 w-64">
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div className="aspect-square bg-gray-300 rounded-lg mb-4 flex items-center justify-center">
+                      <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                      </svg>
                     </div>
-                    {color.popular && (
-                      <span className="absolute -top-2 -right-2 bg-primary-600 text-white text-xs px-2 py-1 rounded-full">
-                        Popular
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm font-medium text-gray-900">{color.name}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 11. Pros & Cons Section */}
-      <section 
-        id="pros-cons" 
-        ref={(el) => { sectionRefs.current['pros-cons'] = el }}
-        className="bg-white px-4 py-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            {carData.brand} {carData.model} Pros & Cons
-          </h2>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Pros */}
-            <div className="bg-green-50 rounded-lg p-6 border border-green-200">
-              <div className="flex items-center mb-4">
-                <ThumbsUp className="h-6 w-6 text-green-600 mr-2" />
-                <h3 className="text-lg font-bold text-green-800">Pros</h3>
-              </div>
-              <ul className="space-y-3">
-                {carData.pros.map((pro, index) => (
-                  <li key={index} className="flex items-start">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                    <span className="text-green-700">{pro}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            
-            {/* Cons */}
-            <div className="bg-red-50 rounded-lg p-6 border border-red-200">
-              <div className="flex items-center mb-4">
-                <ThumbsDown className="h-6 w-6 text-red-600 mr-2" />
-                <h3 className="text-lg font-bold text-red-800">Cons</h3>
-              </div>
-              <ul className="space-y-3">
-                {carData.cons.map((con, index) => (
-                  <li key={index} className="flex items-start">
-                    <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                    <span className="text-red-700">{con}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 12. Model Summary */}
-      <section className="bg-gray-50 px-4 py-8">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            {carData.brand} {carData.model} Summary
-          </h2>
-          
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <p className="text-gray-700 leading-relaxed text-lg">
-              {carData.description}
-            </p>
-            
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary-600 mb-1">{formatPrice(carData.startingPrice)}</div>
-                  <div className="text-sm text-gray-600">Starting Price</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary-600 mb-1">{carData.specifications.mileage}</div>
-                  <div className="text-sm text-gray-600">Mileage</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary-600 mb-1">{carData.specifications.safetyRating}</div>
-                  <div className="text-sm text-gray-600">Safety Rating</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 13. Engine Highlights */}
-      <section className="bg-white px-4 py-8">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            {carData.brand} {carData.model} Engine Highlights
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-gray-50 rounded-lg p-6 text-center border border-gray-200">
-              <Zap className="h-12 w-12 text-primary-600 mx-auto mb-3" />
-              <h3 className="font-bold text-gray-900 mb-2">Engine</h3>
-              <p className="text-gray-600">{carData.specifications.engine}</p>
-            </div>
-            
-            <div className="bg-gray-50 rounded-lg p-6 text-center border border-gray-200">
-              <Gauge className="h-12 w-12 text-primary-600 mx-auto mb-3" />
-              <h3 className="font-bold text-gray-900 mb-2">Max Power</h3>
-              <p className="text-gray-600">{carData.specifications.power}</p>
-            </div>
-            
-            <div className="bg-gray-50 rounded-lg p-6 text-center border border-gray-200">
-              <Settings className="h-12 w-12 text-primary-600 mx-auto mb-3" />
-              <h3 className="font-bold text-gray-900 mb-2">Max Torque</h3>
-              <p className="text-gray-600">{carData.specifications.torque}</p>
-            </div>
-            
-            <div className="bg-gray-50 rounded-lg p-6 text-center border border-gray-200">
-              <Fuel className="h-12 w-12 text-primary-600 mx-auto mb-3" />
-              <h3 className="font-bold text-gray-900 mb-2">Fuel Type</h3>
-              <p className="text-gray-600">{carData.specifications.fuelType}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 14. Mileage Section */}
-      <section 
-        id="mileage" 
-        ref={(el) => { sectionRefs.current['mileage'] = el }}
-        className="bg-gray-50 px-4 py-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            {carData.brand} {carData.model} Mileage
-          </h2>
-          
-          <div className="overflow-x-auto">
-            <div className="flex space-x-6 pb-4">
-              <div className="flex-shrink-0 bg-white rounded-lg p-6 border border-gray-200 text-center min-w-[200px]">
-                <Fuel className="h-12 w-12 text-primary-600 mx-auto mb-3" />
-                <h3 className="font-bold text-gray-900 mb-2">City Mileage</h3>
-                <p className="text-2xl font-bold text-primary-600">{carData.mileage.city}</p>
-              </div>
-              
-              <div className="flex-shrink-0 bg-white rounded-lg p-6 border border-gray-200 text-center min-w-[200px]">
-                <Fuel className="h-12 w-12 text-primary-600 mx-auto mb-3" />
-                <h3 className="font-bold text-gray-900 mb-2">Highway Mileage</h3>
-                <p className="text-2xl font-bold text-primary-600">{carData.mileage.highway}</p>
-              </div>
-              
-              <div className="flex-shrink-0 bg-white rounded-lg p-6 border border-gray-200 text-center min-w-[200px]">
-                <Fuel className="h-12 w-12 text-primary-600 mx-auto mb-3" />
-                <h3 className="font-bold text-gray-900 mb-2">Combined Mileage</h3>
-                <p className="text-2xl font-bold text-primary-600">{carData.mileage.combined}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 15. Similar Cars Section */}
-      <section 
-        id="similar-cars" 
-        ref={(el) => { sectionRefs.current['similar-cars'] = el }}
-        className="bg-white px-4 py-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Cars Similar to {carData.brand} {carData.model}
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Mock similar cars */}
-            {[1, 2, 3].map((index) => (
-              <div key={index} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                <div className="h-32 bg-gradient-to-br from-gray-300 to-gray-400 rounded-lg mb-4 flex items-center justify-center">
-                  <div className="text-white text-6xl">🚗</div>
-                </div>
-                <h3 className="font-bold text-gray-900 mb-2">Similar Car {index}</h3>
-                <p className="text-primary-600 font-semibold mb-3">₹8.50 - 12.00 Lakh</p>
-                <div className="flex space-x-2">
-                  <button className="flex-1 bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
-                    View Details
-                  </button>
-                  <button className="flex-1 bg-white hover:bg-gray-50 text-gray-900 py-2 px-4 rounded-lg border border-gray-300 text-sm font-medium transition-colors">
-                    Compare
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 16. Compare Cars Section */}
-      <section 
-        id="compare" 
-        ref={(el) => { sectionRefs.current['compare'] = el }}
-        className="bg-gray-50 px-4 py-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Compare {carData.brand} {carData.model}
-          </h2>
-          
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <div className="text-center mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Select Cars to Compare</h3>
-              <p className="text-gray-600">Choose up to 3 cars to compare specifications and features</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <span className="text-2xl">🚗</span>
-                </div>
-                <p className="font-medium text-gray-900">{carData.fullName}</p>
-                <p className="text-sm text-primary-600">Selected</p>
-              </div>
-              
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary-300 cursor-pointer">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Search className="h-8 w-8 text-gray-400" />
-                </div>
-                <p className="text-gray-600">Add Car 2</p>
-              </div>
-              
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary-300 cursor-pointer">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Search className="h-8 w-8 text-gray-400" />
-                </div>
-                <p className="text-gray-600">Add Car 3</p>
-              </div>
-            </div>
-            
-            <div className="text-center">
-              <Link
-                href="/compare"
-                className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-colors inline-flex items-center space-x-2"
-              >
-                <ExternalLink className="h-5 w-5" />
-                <span>Go to Compare Tool</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 17. Model News Section */}
-      <section 
-        id="news" 
-        ref={(el) => { sectionRefs.current['news'] = el }}
-        className="bg-white px-4 py-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">
-              {carData.brand} {carData.model} News
-            </h2>
-            <Link
-              href="/news"
-              className="text-primary-600 hover:text-primary-700 font-medium flex items-center space-x-1"
-            >
-              <span>View All</span>
-              <ChevronRight className="h-4 w-4" />
-            </Link>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {(showFullNews ? newsArticles : newsArticles.slice(0, 2)).map((article) => (
-              <article key={article.id} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                <div className="flex items-center mb-3">
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${
-                    article.category === 'review' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-                  }`}>
-                    {article.category}
-                  </span>
-                  <span className="text-sm text-gray-500 ml-3">{new Date(article.publishedAt).toLocaleDateString()}</span>
-                </div>
-                
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{article.title}</h3>
-                <p className="text-gray-600 mb-4">{article.excerpt}</p>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center text-sm text-gray-500">
-                    <User className="h-4 w-4 mr-1" />
-                    <span className="mr-3">{article.author}</span>
-                    <Clock className="h-4 w-4 mr-1" />
-                    <span>{article.readTime} min read</span>
-                  </div>
-                  <Link
-                    href={`/news/${article.id}`}
-                    className="text-primary-600 hover:text-primary-700 font-medium text-sm"
-                  >
-                    Read More
-                  </Link>
-                </div>
-              </article>
-            ))}
-          </div>
-          
-          {newsArticles.length > 2 && !showFullNews && (
-            <div className="text-center mt-6">
-              <button
-                onClick={() => setShowFullNews(true)}
-                className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-              >
-                Load More News
-              </button>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* 18. Model Videos */}
-      <section 
-        id="videos" 
-        ref={(el) => { sectionRefs.current['videos'] = el }}
-        className="bg-gray-50 px-4 py-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            {carData.brand} {carData.model} Videos
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(showFullVideos ? videos : videos.slice(0, 2)).map((video) => (
-              <div key={video.id} className="bg-white rounded-lg overflow-hidden border border-gray-200">
-                <div className="relative h-48 bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
-                  <Play className="h-16 w-16 text-white opacity-80" />
-                  <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-                    {video.duration}
+                    <h3 className="font-semibold text-gray-900">Advanced Safety Features</h3>
                   </div>
                 </div>
-                
-                <div className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-2">{video.title}</h3>
-                  <div className="flex items-center justify-between text-sm text-gray-500">
-                    <div className="flex items-center">
-                      <Eye className="h-4 w-4 mr-1" />
-                      <span>{video.views} views</span>
+
+                {/* Feature Card 2 */}
+                <div className="flex-shrink-0 w-64">
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div className="aspect-square bg-gray-300 rounded-lg mb-4 flex items-center justify-center">
+                      <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                      </svg>
                     </div>
-                    <button className="text-primary-600 hover:text-primary-700 font-medium">
-                      Watch Now
+                    <h3 className="font-semibold text-gray-900">Premium Interior</h3>
+                  </div>
+                </div>
+
+                {/* Feature Card 3 */}
+                <div className="flex-shrink-0 w-64">
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div className="aspect-square bg-gray-300 rounded-lg mb-4 flex items-center justify-center">
+                      <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold text-gray-900">Smart Technology</h3>
+                  </div>
+                </div>
+
+                {/* Feature Card 4 */}
+                <div className="flex-shrink-0 w-64">
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div className="aspect-square bg-gray-300 rounded-lg mb-4 flex items-center justify-center">
+                      <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold text-gray-900">Fuel Efficiency</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* AD Banner Section */}
+        <section className="bg-gray-300 py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl font-bold text-gray-600">AD Banner</h2>
+          </div>
+        </section>
+
+        {/* Section 4: Model Price Details */}
+        <section id="price-details" className="bg-gray-50 py-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Header */}
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Renault Kwid Price</h2>
+            
+            {/* SEO Content */}
+            <div className="mb-8">
+              <p className="text-gray-700 text-sm leading-relaxed">
+                Tata Nexon price for the base model starts at Rs. 8.00 Lakh and the top model price goes upto Rs. 15.60 Lakh (Avg. ex-showroom). Nexon price for 49 variants is listed below.
+              </p>
+            </div>
+
+            {/* Variants Section */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Variants</h3>
+              
+              {/* Filter Options */}
+              <div className="flex flex-wrap gap-4 mb-6">
+                <button className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                  All
+                </button>
+                <button className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                  Diesel
+                </button>
+                <button className="px-4 py-2 bg-red-500 text-white rounded-lg">
+                  Petrol
+                </button>
+                <button className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                  CNG
+                </button>
+                <button className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                  Automatic
+                </button>
+              </div>
+
+              {/* Variant Cards */}
+              <div className="space-y-4">
+                {/* Variant Card 1 */}
+                <div className="bg-white rounded-lg p-4 border border-gray-200">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h4 className="font-semibold text-red-600 text-lg">Smart (O) 1.2 Revotron</h4>
+                      <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                        <span>Petrol</span>
+                        <span>Manual</span>
+                        <span>86 Bhp</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500">Ex-Showroom</p>
+                      <p className="text-lg font-bold text-gray-900">₹ 8.00 Lakhs</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <p className="text-sm font-medium text-gray-900 mb-2">Key Features:</p>
+                    <p className="text-sm text-gray-600">Dual Airbags, ABS with EBD, Reverse Parking Sensors, Central Locking, Power Steering</p>
+                  </div>
+                  
+                  <div className="flex space-x-3">
+                    <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                      Get On-Road Price
+                    </button>
+                    <button className="border border-red-500 text-red-500 hover:bg-red-50 px-4 py-2 rounded-lg text-sm font-medium">
+                      Compare
+                    </button>
+                  </div>
+                </div>
+
+                {/* Variant Card 2 */}
+                <div className="bg-white rounded-lg p-4 border border-gray-200">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h4 className="font-semibold text-red-600 text-lg">Smart Plus 1.2 Revotron</h4>
+                      <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                        <span>Petrol</span>
+                        <span>Manual</span>
+                        <span>86 Bhp</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500">Ex-Showroom</p>
+                      <p className="text-lg font-bold text-gray-900">₹ 9.25 Lakhs</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <p className="text-sm font-medium text-gray-900 mb-2">Key Features:</p>
+                    <p className="text-sm text-gray-600">All Smart features plus Touchscreen Infotainment, Steering Mounted Controls, Height Adjustable Driver Seat</p>
+                  </div>
+                  
+                  <div className="flex space-x-3">
+                    <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                      Get On-Road Price
+                    </button>
+                    <button className="border border-red-500 text-red-500 hover:bg-red-50 px-4 py-2 rounded-lg text-sm font-medium">
+                      Compare
+                    </button>
+                  </div>
+                </div>
+
+                {/* Variant Card 3 */}
+                <div className="bg-white rounded-lg p-4 border border-gray-200">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h4 className="font-semibold text-red-600 text-lg">Smart (O) 1.2 Revotron</h4>
+                      <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                        <span>Petrol</span>
+                        <span>Manual</span>
+                        <span>86 Bhp</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500">Ex-Showroom</p>
+                      <p className="text-lg font-bold text-gray-900">₹ 8.00 Lakhs</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <p className="text-sm font-medium text-gray-900 mb-2">Key Features:</p>
+                    <p className="text-sm text-gray-600">Dual Airbags, ABS with EBD, Reverse Parking Sensors, Central Locking, Power Steering</p>
+                  </div>
+                  
+                  <div className="flex space-x-3">
+                    <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                      Get On-Road Price
+                    </button>
+                    <button className="border border-red-500 text-red-500 hover:bg-red-50 px-4 py-2 rounded-lg text-sm font-medium">
+                      Compare
+                    </button>
+                  </div>
+                </div>
+
+                {/* Variant Card 4 */}
+                <div className="bg-white rounded-lg p-4 border border-gray-200">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h4 className="font-semibold text-red-600 text-lg">Smart Plus 1.2 Revotron</h4>
+                      <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                        <span>Petrol</span>
+                        <span>Manual</span>
+                        <span>86 Bhp</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500">Ex-Showroom</p>
+                      <p className="text-lg font-bold text-gray-900">₹ 9.25 Lakhs</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <p className="text-sm font-medium text-gray-900 mb-2">Key Features:</p>
+                    <p className="text-sm text-gray-600">All Smart features plus Touchscreen Infotainment, Steering Mounted Controls, Height Adjustable Driver Seat</p>
+                  </div>
+                  
+                  <div className="flex space-x-3">
+                    <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                      Get On-Road Price
+                    </button>
+                    <button className="border border-red-500 text-red-500 hover:bg-red-50 px-4 py-2 rounded-lg text-sm font-medium">
+                      Compare
                     </button>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-          
-          {videos.length > 2 && !showFullVideos && (
-            <div className="text-center mt-6">
-              <button
-                onClick={() => setShowFullVideos(true)}
-                className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-              >
-                Load More Videos
-              </button>
-            </div>
-          )}
-        </div>
-      </section>
 
-      {/* 19. FAQ Section */}
-      <section 
-        id="faq" 
-        ref={(el) => { sectionRefs.current['faq'] = el }}
-        className="bg-white px-4 py-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            {carData.brand} {carData.model} FAQ
-          </h2>
-          
-          <div className="space-y-4">
-            {faqs.map((faq) => (
-              <div key={faq.id} className="bg-gray-50 rounded-lg border border-gray-200">
-                <button
-                  onClick={() => setExpandedFAQ(expandedFAQ === faq.id ? null : faq.id)}
-                  className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-100 transition-colors"
-                >
-                  <span className="font-medium text-gray-900">{faq.question}</span>
-                  <ChevronDown 
-                    className={`h-5 w-5 text-gray-400 transition-transform ${
-                      expandedFAQ === faq.id ? 'rotate-180' : ''
-                    }`} 
-                  />
-                </button>
-                
-                {expandedFAQ === faq.id && (
-                  <div className="px-6 pb-4">
-                    <p className="text-gray-700">{faq.answer}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 20. User Reviews */}
-      <section 
-        id="reviews" 
-        ref={(el) => { sectionRefs.current['reviews'] = el }}
-        className="bg-gray-50 px-4 py-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">
-              {carData.brand} {carData.model} User Reviews
-            </h2>
-            <button className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-              Write a Review
-            </button>
-          </div>
-          
-          <div className="grid gap-6">
-            {userReviews.map((review) => (
-              <div key={review.id} className="bg-white rounded-lg p-6 border border-gray-200">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                      <User className="h-6 w-6 text-primary-600" />
-                    </div>
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <p className="font-medium text-gray-900">{review.author}</p>
-                        {review.verified && (
-                          <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                            Verified
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-500">{review.location}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="text-right">
-                    <div className="flex items-center space-x-1 mb-1">
-                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                      <span className="font-medium text-gray-900">{review.rating}</span>
-                    </div>
-                    <p className="text-xs text-gray-500">{new Date(review.date).toLocaleDateString()}</p>
-                  </div>
-                </div>
-                
-                <h4 className="font-medium text-gray-900 mb-2">{review.title}</h4>
-                <p className="text-gray-700 mb-4">{review.review}</p>
-                
-                <div className="flex items-center justify-between">
-                  <button className="flex items-center space-x-1 text-sm text-gray-500 hover:text-gray-700">
-                    <ThumbsUp className="h-4 w-4" />
-                    <span>Helpful ({review.helpful})</span>
-                  </button>
-                  <button className="text-sm text-primary-600 hover:text-primary-700">
-                    Reply
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 21. Upcoming Cars */}
-      <section className="bg-white px-4 py-8">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Upcoming Cars</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((index) => (
-              <div key={index} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                <div className="h-32 bg-gradient-to-br from-gray-300 to-gray-400 rounded-lg mb-4 flex items-center justify-center">
-                  <Calendar className="h-12 w-12 text-white" />
-                </div>
-                <h3 className="font-bold text-gray-900 mb-2">Upcoming Car {index}</h3>
-                <p className="text-primary-600 font-semibold mb-2">Expected Price: ₹10-15 Lakh</p>
-                <p className="text-sm text-gray-600 mb-4">Launch Date: Q2 2024</p>
-                <button className="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
-                  Get Notified
+              {/* Load More Button */}
+              <div className="text-center mt-6">
+                <button className="w-full bg-white border border-gray-300 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-50 font-medium">
+                  View More Variants
                 </button>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 22. New Launches */}
-      <section className="bg-gray-50 px-4 py-8">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">New Launches</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((index) => (
-              <div key={index} className="bg-white rounded-lg p-6 border border-gray-200">
-                <div className="h-32 bg-gradient-to-br from-gray-300 to-gray-400 rounded-lg mb-4 flex items-center justify-center">
-                  <Award className="h-12 w-12 text-white" />
-                </div>
-                <h3 className="font-bold text-gray-900 mb-2">New Launch {index}</h3>
-                <p className="text-primary-600 font-semibold mb-2">₹8.50 - 12.00 Lakh</p>
-                <p className="text-sm text-gray-600 mb-4">Recently Launched</p>
-                <button className="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
-                  View Details
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 23. Consultancy Ad Section */}
-      <section className="bg-gradient-to-r from-primary-600 to-blue-600 px-4 py-12">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold text-white mb-4">
-              Need Expert Car Buying Advice?
-            </h2>
-            <p className="text-xl text-blue-100 mb-8">
-              Get personalized recommendations from our automotive experts. We'll help you find the perfect car that fits your needs and budget.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-primary-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2">
-                <Phone className="h-5 w-5" />
-                <span>Call Now</span>
-              </button>
-              <button className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-primary-600 px-8 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2">
-                <Mail className="h-5 w-5" />
-                <span>Get Free Consultation</span>
-              </button>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 22. Warranty & Service Section */}
-      <section 
-        id="warranty" 
-        ref={(el) => { sectionRefs.current['warranty'] = el }}
-        className="bg-white px-4 py-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Warranty & Service</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-              <Shield className="h-12 w-12 text-primary-600 mb-4" />
-              <h3 className="font-bold text-gray-900 mb-2">Standard Warranty</h3>
-              <p className="text-gray-600 mb-4">2 Years / 40,000 km comprehensive warranty</p>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Engine & Transmission</li>
-                <li>• Electrical Components</li>
-                <li>• Paint & Body</li>
-              </ul>
-            </div>
-            
-            <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-              <Settings className="h-12 w-12 text-primary-600 mb-4" />
-              <h3 className="font-bold text-gray-900 mb-2">Service Network</h3>
-              <p className="text-gray-600 mb-4">1000+ authorized service centers across India</p>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Express Service</li>
-                <li>• 24x7 Roadside Assistance</li>
-                <li>• Genuine Spare Parts</li>
-              </ul>
-            </div>
+        {/* Color Options Section */}
+        <ColorOptions 
+          carName="Renault Kwid"
+          colors={[
+            {
+              id: '1',
+              name: 'Sun Corridor',
+              hexCode: '#4A90E2',
+              image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&h=400&fit=crop'
+            },
+            {
+              id: '2', 
+              name: 'Metallic Silver',
+              hexCode: '#C0C0C0',
+              image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&h=400&fit=crop'
+            },
+            {
+              id: '3',
+              name: 'Deep Black',
+              hexCode: '#1C1C1C', 
+              image: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&h=400&fit=crop'
+            },
+            {
+              id: '4',
+              name: 'Racing Red',
+              hexCode: '#DC143C',
+              image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&h=400&fit=crop'
+            },
+            {
+              id: '5',
+              name: 'Ocean Blue',
+              hexCode: '#1E90FF',
+              image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&h=400&fit=crop'
+            }
+          ]}
+        />
+
+        {/* Pros and Cons Section */}
+        <ProsAndCons 
+          carName="Renault Kwid"
+          data={{
+            pros: [
+              {
+                id: '1',
+                text: 'The safety is top notch with five-star BNCAP safety rating, six airbags as standard and ISOFIX anchors.',
+                isVisible: true
+              },
+              {
+                id: '2',
+                text: 'The interior and exterior design is modern and features such as panoramic sunroof, JBL sound system and touchscreen infotainment.',
+                isVisible: true
+              },
+              {
+                id: '3',
+                text: 'Excellent fuel efficiency with impressive mileage in both city and highway conditions.',
+                isVisible: false
+              },
+              {
+                id: '4',
+                text: 'Spacious interior with comfortable seating for five passengers and ample boot space.',
+                isVisible: false
+              }
+            ],
+            cons: [
+              {
+                id: '1',
+                text: 'The diesel engine can do with more refinement and the throttle response feels delayed up to 2,000 rpm.',
+                isVisible: true
+              },
+              {
+                id: '2',
+                text: 'The CNG is limited to a manual transmission which may deter city drivers seeking easy shifting.',
+                isVisible: true
+              },
+              {
+                id: '3',
+                text: 'Limited rear seat space may not be comfortable for tall passengers on long journeys.',
+                isVisible: false
+              },
+              {
+                id: '4',
+                text: 'Build quality could be improved, especially for interior plastics and panel gaps.',
+                isVisible: false
+              }
+            ]
+          }}
+        />
+
+        {/* Model Summary Section */}
+        <ModelSummarySection 
+          carName="Renault Kwid"
+          summaryData={{
+            description: [
+              "The Alto K10 Is A Hatchback That Belongs To The Entry-Level Hatchback Segment. It Is A More Powerful Version Of The Maruti Alto 800 And Was Launched In 2022.",
+              "The Maruti Alto K10 comes with a simple front design. At the front, we have fish-eyed headlamps that are integrated with the bonnet. Below that, we have a big air dam and faux cutouts. On the side, we have a clean design with not many cuts and creases. At the rear, we squared tail lamps at the big bumper. Apart from that, it gets 13-inch steel wheels with full wheel covers, a roof antenna and body-coloured ORVMs."
+            ],
+            exteriorDesign: [
+              "The Maruti Alto K10 comes with a simple front design. At the front, we have fish-eyed headlamps that are integrated with the bonnet. Below that, we have a big air dam and faux cutouts.",
+              "On the side, we have a clean design with not many cuts and creases. At the rear, we squared tail lamps at the big bumper. Apart from that, it gets 13-inch steel wheels with full wheel covers, a roof antenna and body-coloured ORVMs."
+            ],
+            comfortConvenience: [
+              "On the inside, the Alto K10 comes with an all-black interior design layout. We have a coloured dashboard with a center-placed infotainment system. This infotainment system is a 7-inch touchscreen infotainment that gets - wired Android Auto and Apple CarPlay. We also have power steer.",
+              "Steering-mounted controls with voice control, gear shift indicator, manual air conditioning with power steer. The Alto K10 also gets a manual transmission and power steering for enhanced driving comfort."
+            ]
+          }}
+        />
+
+        {/* Engine Highlights Section */}
+        <EngineHighlightsSection 
+          carName="Renault Kwid"
+          engines={[
+            {
+              id: 1,
+              name: "1.2 Liter Turbo Petrol",
+              displacement: "1.2L",
+              power: "87 Bhp",
+              torque: "113 Nm",
+              transmission: "6-Speed",
+              fuelType: "Petrol",
+              description: "Suitable For Both City Driving And Highway Cruising. The 1.2 Litre Engine Of The Tata Altroz Offers Adequate Power For City And Highway Driving. The Engine Provides Smooth Acceleration Without Compromising On Fuel Efficiency",
+              specifications: {
+                manual: {
+                  power: "87 Bhp",
+                  torque: "113 Nm",
+                  transmission: "6-Speed"
+                },
+                automatic: {
+                  power: "87 Bhp",
+                  torque: "113 Nm",
+                  transmission: "6-Speed"
+                },
+                imt: {
+                  power: "87 Bhp",
+                  torque: "113 Nm",
+                  transmission: "6-Speed"
+                }
+              }
+            },
+            {
+              id: 2,
+              name: "2.5 Liter Diesel",
+              displacement: "2.5L",
+              power: "87 Bhp",
+              torque: "113 Nm",
+              transmission: "6-Speed",
+              fuelType: "Diesel",
+              description: "Suitable For Both City Driving And Highway Cruising. The 1.2 Liter Engine Of The Tata Altroz Offers Adequate Power For City And Highway Driving. The Engine Provides Smooth Acceleration Without Compromising On Fuel Efficiency",
+              specifications: {
+                manual: {
+                  power: "87 Bhp",
+                  torque: "113 Nm",
+                  transmission: "6-Speed"
+                },
+                imt: {
+                  power: "87 Bhp",
+                  torque: "113 Nm",
+                  transmission: "6-Speed"
+                }
+              }
+            },
+            {
+              id: 3,
+              name: "1.5 Liter Diesel",
+              displacement: "1.5L",
+              power: "87 Bhp",
+              torque: "113 Nm",
+              transmission: "6-Speed",
+              fuelType: "Diesel",
+              description: "Suitable For Both City Driving And Highway Cruising. The 1.2 Liter Engine Of The Tata Altroz Offers Adequate Power For City And Highway Driving. The Engine Provides Smooth Acceleration Without Compromising On Fuel Efficiency",
+              specifications: {
+                imt: {
+                  power: "87 Bhp",
+                  torque: "113 Nm",
+                  transmission: "6-Speed"
+                }
+              }
+            }
+          ]}
+        />
+
+        {/* Mileage Information Section */}
+        <MileageInformation 
+          carName="Renault Kwid"
+          mileageData={[
+            {
+              id: '1',
+              engineType: '1.5 Litre Turbo Petrol',
+              transmission: 'DCT',
+              companyClaimed: '56.2 Km/l',
+              cityRealWorld: '56.2 Km/l',
+              highwayRealWorld: '56.2 Km/l'
+            },
+            {
+              id: '2',
+              engineType: '1.2 Litre Petrol',
+              transmission: 'Manual',
+              companyClaimed: '22.5 Km/l',
+              cityRealWorld: '18.3 Km/l',
+              highwayRealWorld: '24.1 Km/l'
+            },
+            {
+              id: '3',
+              engineType: '1.0 Litre Turbo',
+              transmission: 'AMT',
+              companyClaimed: '25.8 Km/l',
+              cityRealWorld: '21.2 Km/l',
+              highwayRealWorld: '27.5 Km/l'
+            }
+          ]}
+        />
+
+        {/* AD Banner Section */}
+        <section className="bg-gray-300 py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl font-bold text-gray-600">AD Banner</h2>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 23. Offers & Discounts Section */}
-      <section 
-        id="offers" 
-        ref={(el) => { sectionRefs.current['offers'] = el }}
-        className="bg-gradient-to-r from-orange-50 to-red-50 px-4 py-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Current Offers & Discounts</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-lg p-6 border-2 border-orange-200">
-              <Tag className="h-8 w-8 text-orange-600 mb-3" />
-              <h3 className="font-bold text-gray-900 mb-2">Cash Discount</h3>
-              <p className="text-2xl font-bold text-orange-600 mb-2">₹25,000</p>
-              <p className="text-sm text-gray-600">Valid till March 2024</p>
-            </div>
-            
-            <div className="bg-white rounded-lg p-6 border-2 border-blue-200">
-              <ExternalLink className="h-8 w-8 text-blue-600 mb-3" />
-              <h3 className="font-bold text-gray-900 mb-2">Exchange Bonus</h3>
-              <p className="text-2xl font-bold text-blue-600 mb-2">₹15,000</p>
-              <p className="text-sm text-gray-600">Additional on old car exchange</p>
-            </div>
-            
-            <div className="bg-white rounded-lg p-6 border-2 border-green-200">
-              <Award className="h-8 w-8 text-green-600 mb-3" />
-              <h3 className="font-bold text-gray-900 mb-2">Finance Offer</h3>
-              <p className="text-2xl font-bold text-green-600 mb-2">7.99%</p>
-              <p className="text-sm text-gray-600">Interest rate starting from</p>
-            </div>
+        {/* Similar Cars Section */}
+        <SimilarCarsSection 
+          carName="Renault Kwid"
+          similarCars={[
+            {
+              id: '1',
+              name: 'Maruti Suzuki Alto K10',
+              brand: 'Maruti Suzuki',
+              price: '3.99 Lakh',
+              fuelType: 'Petrol',
+              seating: '5 Seater',
+              mileage: '24.39 kmpl',
+              location: 'Delhi',
+              image: ''
+            },
+            {
+              id: '2',
+              name: 'Renault Kwid',
+              brand: 'Renault',
+              price: '4.59 Lakh',
+              fuelType: 'Petrol',
+              seating: '5 Seater',
+              mileage: '22.3 kmpl',
+              location: 'Mumbai',
+              image: ''
+            },
+            {
+              id: '3',
+              name: 'Tata Tiago',
+              brand: 'Tata',
+              price: '5.65 Lakh',
+              fuelType: 'Petrol',
+              seating: '5 Seater',
+              mileage: '19.5 kmpl',
+              location: 'Bangalore',
+              image: ''
+            },
+            {
+              id: '4',
+              name: 'Hyundai Grand i10',
+              brand: 'Hyundai',
+              price: '5.92 Lakh',
+              fuelType: 'Petrol',
+              seating: '5 Seater',
+              mileage: '20.7 kmpl',
+              location: 'Chennai',
+              image: ''
+            }
+          ]}
+        />
+
+        {/* Car Comparison Section */}
+        <CarComparisonSection 
+          comparisonCars={[
+            {
+              id: '1',
+              name: 'Tucson',
+              brand: 'Hyundai',
+              price: '7.99 - 15.96 Lakhs',
+              image: ''
+            },
+            {
+              id: '2',
+              name: 'Nexon',
+              brand: 'Tata',
+              price: '7.70 - 14.18 Lakhs',
+              image: ''
+            },
+            {
+              id: '3',
+              name: 'Tucson',
+              brand: 'Hyundai',
+              price: '7.99 - 15.96 Lakhs',
+              image: ''
+            },
+            {
+              id: '4',
+              name: 'Creta',
+              brand: 'Hyundai',
+              price: '10.87 - 18.73 Lakhs',
+              image: ''
+            },
+            {
+              id: '5',
+              name: 'Seltos',
+              brand: 'Kia',
+              price: '10.90 - 18.45 Lakhs',
+              image: ''
+            }
+          ]}
+        />
+
+        {/* Model News Section */}
+        <ModelNewsSection 
+          carName="Renault Kwid"
+          newsArticles={[
+            {
+              id: '1',
+              title: 'Maruti Suzuki Grand Vitara Hybrid Review: Best Fuel Economy in Segment',
+              excerpt: 'We test drive the new Grand Vitara hybrid to see if it lives up to the fuel efficiency claims and overall performance expectations.',
+              author: 'Rajesh Kumar',
+              date: '15 Mar',
+              readTime: '5 min read',
+              views: '12,500',
+              comments: '45',
+              category: 'Review',
+              image: ''
+            },
+            {
+              id: '2',
+              title: 'Upcoming Electric Cars in India 2024: Complete List',
+              excerpt: 'From Tata to Mahindra, here are all the electric vehicles launching in India this year with expected prices and specifications.',
+              author: 'Priya Sharma',
+              date: '12 Mar',
+              readTime: '8 min read',
+              views: '8,200',
+              comments: '23',
+              category: 'News',
+              image: ''
+            },
+            {
+              id: '3',
+              title: 'Best Budget Cars Under 10 Lakhs in 2024',
+              excerpt: 'Detailed comparison of the most value-for-money cars available in India under 10 lakhs with features and specifications.',
+              author: 'Amit Singh',
+              date: '10 Mar',
+              readTime: '6 min read',
+              views: '15,800',
+              comments: '67',
+              category: 'Featured',
+              image: ''
+            }
+          ]}
+        />
+
+        {/* YouTube Videos Section */}
+        <YouTubeVideosSection 
+          carName="Renault Kwid"
+          videos={[
+            {
+              id: '1',
+              title: 'Maruti Suzuki Grand Vitara Detailed Review | Hybrid vs Petrol | Which One...',
+              channel: 'MotorOctane',
+              views: '2.5M views',
+              likes: '45K likes',
+              duration: '12:45',
+              uploadDate: '2 days ago',
+              thumbnail: '',
+              videoUrl: ''
+            },
+            {
+              id: '2',
+              title: 'Top 5 Cars Under 10 Lakhs in 2024',
+              channel: 'MotorOctane',
+              views: '1.2M views',
+              likes: '28K likes',
+              duration: '8:30',
+              uploadDate: '1 week ago',
+              thumbnail: '',
+              videoUrl: ''
+            },
+            {
+              id: '3',
+              title: 'Electric vs Petrol Cars: Complete Cost Analysis',
+              channel: 'MotorOctane',
+              views: '890K views',
+              likes: '19K likes',
+              duration: '15:20',
+              uploadDate: '3 days ago',
+              thumbnail: '',
+              videoUrl: ''
+            },
+            {
+              id: '4',
+              title: 'Hyundai Creta 2024 First Drive Review',
+              channel: 'MotorOctane',
+              views: '1.8M views',
+              likes: '35K likes',
+              duration: '10:15',
+              uploadDate: '5 days ago',
+              thumbnail: '',
+              videoUrl: ''
+            }
+          ]}
+        />
+
+        {/* FAQ Section */}
+        <FAQSection 
+          carName="Renault Kwid"
+          faqs={[
+            {
+              id: '1',
+              question: 'What is the price range of Maruti cars?',
+              answer: 'Maruti cars range from ₹3.5 lakhs for entry-level models like Alto to ₹15+ lakhs for premium models like Ciaz and XL6. The price varies based on variant, features, and location.'
+            },
+            {
+              id: '2',
+              question: 'Which Maruti car has the best mileage?',
+              answer: 'The Maruti Alto K10 offers the best mileage with up to 24.39 kmpl, followed by the Wagon R and Swift which deliver around 23+ kmpl in real-world conditions.'
+            },
+            {
+              id: '3',
+              question: 'Are Maruti cars reliable?',
+              answer: 'Yes, Maruti cars are known for their reliability, low maintenance costs, and excellent after-sales service network across India. They have proven track records for durability.'
+            },
+            {
+              id: '4',
+              question: 'Which Maruti car is best for families?',
+              answer: 'For families, the Maruti Ertiga, XL6, and Swift Dzire are excellent choices offering spacious interiors, safety features, and comfortable seating for 5-7 passengers.'
+            },
+            {
+              id: '5',
+              question: 'Do Maruti cars have good resale value?',
+              answer: 'Maruti cars typically retain 60-70% of their value after 3-4 years, making them one of the best choices for resale value in the Indian automotive market.'
+            }
+          ]}
+        />
+
+        {/* User Reviews Section */}
+        <UserReviewsSection 
+          carName="Maruti Suzuki Maruti Suzuki Alto K10"
+          overallRating={4.2}
+          totalReviews={1543}
+          ratingBreakdown={{
+            5: 856,
+            4: 324,
+            3: 189,
+            2: 26,
+            1: 13
+          }}
+          reviews={[
+            {
+              id: '1',
+              userName: 'Rajesh Kumar',
+              userAvatar: '',
+              rating: 5,
+              date: '15/01/2024',
+              title: 'Excellent car with great mileage',
+              content: 'I have been using this car for 6 months now. The mileage is excellent in city conditions. Build quality is good and maintenance cost is reasonable.',
+              helpful: 24,
+              notHelpful: 2,
+              verified: true
+            },
+            {
+              id: '2',
+              userName: 'Priya Sharma',
+              userAvatar: '',
+              rating: 4,
+              date: '10/01/2024',
+              title: 'Good family car',
+              content: 'Perfect for family use. Spacious interior and comfortable seats. Only issue is the road noise at high speeds.',
+              helpful: 18,
+              notHelpful: 1,
+              verified: true
+            }
+          ]}
+        />
+
+        {/* AD Banner Section */}
+        <section className="bg-gray-300 py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl font-bold text-gray-600">AD Banner</h2>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 24. Ownership Costs Section */}
-      <section 
-        id="ownership" 
-        ref={(el) => { sectionRefs.current['ownership'] = el }}
-        className="bg-gray-50 px-4 py-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Ownership Costs</h2>
-          
-          <div className="bg-white rounded-lg p-6 border border-gray-200">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
-              <div>
-                <IndianRupee className="h-8 w-8 text-primary-600 mx-auto mb-2" />
-                <h3 className="font-semibold text-gray-900 mb-1">Service Cost</h3>
-                <p className="text-lg font-bold text-primary-600">₹3,500</p>
-                <p className="text-sm text-gray-600">per service</p>
-              </div>
-              
-              <div>
-                <Fuel className="h-8 w-8 text-primary-600 mx-auto mb-2" />
-                <h3 className="font-semibold text-gray-900 mb-1">Fuel Cost</h3>
-                <p className="text-lg font-bold text-primary-600">₹4.2</p>
-                <p className="text-sm text-gray-600">per km</p>
-              </div>
-              
-              <div>
-                <Shield className="h-8 w-8 text-primary-600 mx-auto mb-2" />
-                <h3 className="font-semibold text-gray-900 mb-1">Insurance</h3>
-                <p className="text-lg font-bold text-primary-600">₹45,000</p>
-                <p className="text-sm text-gray-600">per year</p>
-              </div>
-              
-              <div>
-                <TrendingUp className="h-8 w-8 text-primary-600 mx-auto mb-2" />
-                <h3 className="font-semibold text-gray-900 mb-1">Resale Value</h3>
-                <p className="text-lg font-bold text-primary-600">65%</p>
-                <p className="text-sm text-gray-600">after 3 years</p>
-              </div>
-            </div>
-            
-            <div className="mt-6 pt-6 border-t border-gray-200 text-center">
-              <Link
-                href="/price-breakup"
-                className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-colors inline-flex items-center space-x-2"
-              >
-                <Calculator className="h-5 w-5" />
-                <span>Calculate Total Cost</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+        {/* Upcoming Cars Section */}
+        <UpcomingCarsSection 
+          upcomingCars={[
+            {
+              id: '1',
+              name: 'Maruti Suzuki Fronx',
+              brand: 'Maruti Suzuki',
+              expectedPrice: '7-12 Lakh',
+              launchDate: 'March 2024',
+              fuelType: 'Petrol/CNG',
+              seating: 'SUV',
+              image: '',
+              status: 'Coming'
+            },
+            {
+              id: '2',
+              name: 'Hyundai Exter',
+              brand: 'Hyundai',
+              expectedPrice: '6-10 Lakh',
+              launchDate: 'April 2024',
+              fuelType: 'Petrol',
+              seating: 'SUV',
+              image: '',
+              status: 'Expected'
+            }
+          ]}
+        />
 
-      {/* 25. Feedback Section */}
-      <section className="bg-white px-4 py-8">
-        <div className="max-w-3xl mx-auto">
-          <div className="bg-gray-50 rounded-lg p-8 border border-gray-200">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Share Your Feedback</h2>
-              <p className="text-gray-600">Help us improve by sharing your thoughts about this page</p>
-            </div>
-            
-            <form className="space-y-4">
-              <div>
-                <label htmlFor="feedback" className="block text-sm font-medium text-gray-700 mb-2">
-                  Your Feedback
-                </label>
-                <textarea
-                  id="feedback"
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  placeholder="Tell us what you think about this car page..."
-                ></textarea>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                    Your Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    placeholder="Enter your name"
-                  />
-                </div>
-                
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    placeholder="Enter your email"
-                  />
-                </div>
-              </div>
-              
-              <button
-                type="submit"
-                className="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 px-6 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
-              >
-                <Send className="h-5 w-5" />
-                <span>Submit Feedback</span>
-              </button>
-            </form>
-          </div>
-        </div>
-      </section>
+        {/* New Launches Section */}
+        <NewLaunchesSection 
+          newLaunches={[
+            {
+              id: '1',
+              name: 'Maruti Suzuki Grand Vitara',
+              brand: 'Maruti Suzuki',
+              price: '10.99 Lakh',
+              launchDate: 'Launched January 2024',
+              fuelType: 'Petrol/Hybrid',
+              seating: '5 Seater',
+              image: '',
+              isNew: true
+            },
+            {
+              id: '2',
+              name: 'Hyundai Tucson Facelift',
+              brand: 'Hyundai',
+              price: '29.99 Lakh',
+              launchDate: 'Launched February 2024',
+              fuelType: 'Petrol/Diesel',
+              seating: '5 Seater',
+              image: '',
+              isNew: true
+            }
+          ]}
+        />
 
-      {/* 25. Footer */}
+        {/* Consultancy Ad Section */}
+        <ConsultancyAdSection />
+
+        {/* Feedback Section */}
+        <FeedbackSection />
+      </div>
+      
       <Footer />
     </div>
   )

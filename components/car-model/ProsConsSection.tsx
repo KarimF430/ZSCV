@@ -1,91 +1,105 @@
 'use client'
 
+import { useState } from 'react'
 import { ThumbsUp, ThumbsDown } from 'lucide-react'
 
-interface ProsConsSectionProps {
-  pros: string[]
-  cons: string[]
-  carName: string
+interface ProsCon {
+  id: string
+  text: string
+  isVisible: boolean
 }
 
-export default function ProsConsSection({ pros, cons, carName }: ProsConsSectionProps) {
-  // Handle undefined or empty arrays
-  const validPros = pros || []
-  const validCons = cons || []
+interface ProsConsData {
+  pros: ProsCon[]
+  cons: ProsCon[]
+}
+
+interface ProsConsSectionProps {
+  carName: string
+  data: ProsConsData
+}
+
+export default function ProsConsSection({ carName, data }: ProsConsSectionProps) {
+  const [showAllPros, setShowAllPros] = useState(false)
+  const [showAllCons, setShowAllCons] = useState(false)
+
+  const visiblePros = showAllPros ? data.pros : data.pros.filter(pro => pro.isVisible)
+  const visibleCons = showAllCons ? data.cons : data.cons.filter(con => con.isVisible)
+  
+  const hasMorePros = data.pros.length > data.pros.filter(pro => pro.isVisible).length
+  const hasMoreCons = data.cons.length > data.cons.filter(con => con.isVisible).length
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6 mb-8">
-      <h2 className="text-xl font-bold text-gray-900 mb-6">
-        {carName || 'Car'} - Pros & Cons
-      </h2>
+    <section className="py-16 bg-gray-100">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Title - matching screenshot exactly */}
+        <h2 className="text-4xl font-bold text-gray-700 mb-12">
+          {carName} Pros & Cons
+        </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Pros Section */}
-        <div>
-          <div className="flex items-center space-x-2 mb-4">
-            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-              <ThumbsUp className="h-4 w-4 text-green-600" />
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Pros Section */}
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-200 p-8">
+            <div className="flex items-center mb-8">
+              <div className="flex items-center justify-center w-10 h-10 mr-4">
+                <ThumbsUp className="w-8 h-8 text-teal-400" strokeWidth={1.5} />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900">Pros</h3>
             </div>
-            <h3 className="text-lg font-semibold text-green-600">Pros</h3>
-          </div>
-
-          <div className="space-y-3">
-            {validPros.length > 0 ? (
-              validPros.map((pro, index) => (
-                <div
-                  key={index}
-                  className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg border border-green-200"
+            
+            <ul className="space-y-6">
+              {visiblePros.map((pro) => (
+                <li key={pro.id} className="flex items-start">
+                  <div className="w-2 h-2 bg-gray-600 rounded-full mt-3 mr-4 flex-shrink-0"></div>
+                  <p className="text-gray-700 text-base leading-relaxed font-normal">{pro.text}</p>
+                </li>
+              ))}
+            </ul>
+            
+            {hasMorePros && !showAllPros && (
+              <div className="flex justify-end mt-8">
+                <button
+                  onClick={() => setShowAllPros(true)}
+                  className="text-gray-600 hover:text-gray-800 font-normal text-base transition-colors"
                 >
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-sm text-gray-800 leading-relaxed">{pro}</p>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500 text-sm">No pros information available</p>
+                  ...more
+                </button>
+              </div>
             )}
           </div>
-        </div>
 
-        {/* Cons Section */}
-        <div>
-          <div className="flex items-center space-x-2 mb-4">
-            <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-              <ThumbsDown className="h-4 w-4 text-red-600" />
+          {/* Cons Section */}
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-200 p-8">
+            <div className="flex items-center mb-8">
+              <div className="flex items-center justify-center w-10 h-10 mr-4">
+                <ThumbsDown className="w-8 h-8 text-orange-400" strokeWidth={1.5} />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900">Cons</h3>
             </div>
-            <h3 className="text-lg font-semibold text-red-600">Cons</h3>
-          </div>
-
-          <div className="space-y-3">
-            {validCons.length > 0 ? (
-              validCons.map((con, index) => (
-                <div
-                  key={index}
-                  className="flex items-start space-x-3 p-3 bg-red-50 rounded-lg border border-red-200"
+            
+            <ul className="space-y-6">
+              {visibleCons.map((con) => (
+                <li key={con.id} className="flex items-start">
+                  <div className="w-2 h-2 bg-gray-600 rounded-full mt-3 mr-4 flex-shrink-0"></div>
+                  <p className="text-gray-700 text-base leading-relaxed font-normal">{con.text}</p>
+                </li>
+              ))}
+            </ul>
+            
+            {hasMoreCons && !showAllCons && (
+              <div className="flex justify-end mt-8">
+                <button
+                  onClick={() => setShowAllCons(true)}
+                  className="text-gray-600 hover:text-gray-800 font-normal text-base transition-colors"
                 >
-                  <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-sm text-gray-800 leading-relaxed">{con}</p>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500 text-sm">No cons information available</p>
+                  ...more
+                </button>
+              </div>
             )}
           </div>
         </div>
       </div>
-
-      {/* Summary */}
-      <div className="mt-6 pt-4 border-t border-gray-200">
-        <div className="grid grid-cols-2 gap-4 text-center">
-          <div>
-            <p className="text-2xl font-bold text-green-600">{validPros.length}</p>
-            <p className="text-sm text-gray-600">Pros</p>
-          </div>
-          <div>
-            <p className="text-2xl font-bold text-red-600">{validCons.length}</p>
-            <p className="text-sm text-gray-600">Cons</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    </section>
   )
 }

@@ -45,12 +45,20 @@ export default function HeroSection() {
                   placeholder="Describe your perfect car..."
                   className="flex-1 px-4 py-4 bg-transparent text-gray-900 placeholder-gray-500 text-lg focus:outline-none"
                 />
-                <button className="mr-2 p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                  <Mic className="h-6 w-6" />
-                </button>
-                <button className="mr-4 p-2 text-blue-600 hover:text-blue-700 transition-colors">
-                  <Bot className="h-6 w-6" />
-                </button>
+                <div className="flex items-center mr-4">
+                  <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100">
+                    <Mic className="h-5 w-5" />
+                  </button>
+                  <button className="p-2 text-blue-600 hover:text-blue-700 transition-colors rounded-lg hover:bg-blue-50">
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                      <rect x="3" y="11" width="18" height="10" rx="2" ry="2"/>
+                      <circle cx="12" cy="5" r="2"/>
+                      <path d="M12 7v4"/>
+                      <line x1="8" y1="16" x2="8" y2="16"/>
+                      <line x1="16" y1="16" x2="16" y2="16"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -84,25 +92,6 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-12 lg:mt-16">
-          <div className="text-center">
-            <div className="text-2xl lg:text-3xl font-bold text-primary-200">500+</div>
-            <div className="text-sm lg:text-base text-primary-100">Car Models</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl lg:text-3xl font-bold text-primary-200">50+</div>
-            <div className="text-sm lg:text-base text-primary-100">Brands</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl lg:text-3xl font-bold text-primary-200">100+</div>
-            <div className="text-sm lg:text-base text-primary-100">Cities</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl lg:text-3xl font-bold text-primary-200">1M+</div>
-            <div className="text-sm lg:text-base text-primary-100">Happy Users</div>
-          </div>
-        </div>
       </div>
     </section>
   )

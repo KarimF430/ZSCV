@@ -89,8 +89,8 @@ export default function VariantSection({ carData }: VariantSectionProps) {
   })
 
   const handleVariantClick = (variant: typeof variants[0]) => {
-    // Navigate to the variant page
-    router.push('/variant')
+    // Navigate to the new variant page
+    router.push('/variant-new')
   }
 
   const VariantCard = ({ variant }: { variant: typeof variants[0] }) => (
