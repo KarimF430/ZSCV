@@ -19,6 +19,9 @@ import UpcomingCarsSection from './UpcomingCarsSection'
 import NewLaunchesSection from './NewLaunchesSection'
 import ConsultancyAdSection from './ConsultancyAdSection'
 import FeedbackSection from './FeedbackSection'
+import PageSection from '../common/PageSection'
+import PageHeader from '../common/PageHeader'
+import Card from '../common/Card'
 
 // Mock data
 const mockCarData = {
@@ -145,10 +148,24 @@ const CarModelPage = () => {
     }
   }
 
+  const breadcrumbs = [
+    { label: 'Home', href: '/' },
+    { label: 'Cars', href: '/cars' },
+    { label: mockCarData.brand, href: `/brands/${mockCarData.brand.toLowerCase()}` },
+    { label: mockCarData.name }
+  ]
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader 
+        title={`${mockCarData.brand} ${mockCarData.name}`}
+        subtitle={`Explore ${mockCarData.brand} ${mockCarData.name} price, specifications, and reviews`}
+        breadcrumbs={breadcrumbs}
+        background="white"
+      />
+
       {/* Sticky Navigation */}
-      <div className="bg-white border-b">
+      <div className="bg-white border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-8">
             {navigationSections.map((section) => (
@@ -171,8 +188,8 @@ const CarModelPage = () => {
       {/* Main Content */}
       <div>
         {/* Section 1: Overview */}
-        <section id="overview" className="bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <PageSection background="white" maxWidth="7xl">
+          <div id="overview">
             {/* Hero Car Image */}
             <div className="relative mb-6">
               <div className="aspect-[16/9] bg-gradient-to-br from-orange-300 via-yellow-300 to-orange-400 rounded-lg overflow-hidden relative">
@@ -308,7 +325,7 @@ const CarModelPage = () => {
               </div>
             </div>
           </div>
-        </section>
+        </PageSection>
 
         {/* Section 2: EMI Calculator */}
         <section id="emi-calculator" className="bg-gray-50 py-8">

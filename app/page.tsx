@@ -10,6 +10,8 @@ import YouTubeVideoPlayer from '@/components/home/YouTubeVideoPlayer'
 import ComparisonBox from '@/components/home/ComparisonBox'
 import ConsultancyAd from '@/components/home/ConsultancyAd'
 import AdSpaces from '@/components/home/AdSpaces'
+import PageSection from '@/components/common/PageSection'
+import Card from '@/components/common/Card'
 
 export default function HomePage() {
   return (
@@ -17,75 +19,72 @@ export default function HomePage() {
       <main>
         <HeroSection />
         
-        {/* Cars by Budget Section */}
-        <CarsByBudget />
+        <PageSection background="gray">
+          <CarsByBudget />
+        </PageSection>
         
-        {/* Popular Cars Section */}
-        <PopularCars />
+        <PageSection background="white">
+          <PopularCars />
+        </PageSection>
         
-        {/* Ad Space 1 */}
-        <div className="py-4">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-4 text-white text-center">
-              <h3 className="font-bold mb-2">Get Best Car Deals</h3>
-              <p className="text-sm opacity-90">Compare prices from multiple dealers</p>
+        <PageSection background="gray">
+          <Card className="text-center">
+            <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-6 text-white">
+              <h3 className="text-xl font-bold mb-2">Get Best Car Deals</h3>
+              <p className="opacity-90">Compare prices from multiple dealers</p>
             </div>
-          </div>
-        </div>
+          </Card>
+        </PageSection>
         
-        {/* Brands Section */}
-        <BrandSection />
+        <PageSection background="white">
+          <BrandSection />
+        </PageSection>
         
-        {/* Upcoming Cars Section */}
-        <UpcomingCars />
+        <PageSection background="gray">
+          <UpcomingCars />
+        </PageSection>
         
-        {/* Ad Space 2 */}
-        <div className="py-4">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-gradient-to-r from-green-500 to-teal-600 rounded-lg p-4 text-white text-center">
-              <h3 className="font-bold mb-2">Car Insurance</h3>
-              <p className="text-sm opacity-90">Save up to 85% on car insurance premiums</p>
+        <PageSection background="white">
+          <Card className="text-center">
+            <div className="bg-gradient-to-r from-green-500 to-teal-600 rounded-lg p-6 text-white">
+              <h3 className="text-xl font-bold mb-2">Car Insurance</h3>
+              <p className="opacity-90">Save up to 85% on car insurance premiums</p>
             </div>
-          </div>
-        </div>
+          </Card>
+        </PageSection>
         
-        {/* New Launched Cars Section */}
-        <NewLaunchedCars />
+        <PageSection background="gray">
+          <NewLaunchedCars />
+        </PageSection>
         
-        {/* Latest Car News Section */}
-        <LatestCarNews />
+        <PageSection background="white">
+          <LatestCarNews />
+        </PageSection>
         
-        {/* Ad Space 3 */}
-        <div className="py-4">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-gradient-to-r from-orange-500 to-red-600 rounded-lg p-4 text-white text-center">
-              <h3 className="font-bold mb-2">Car Loans</h3>
-              <p className="text-sm opacity-90">Get instant approval with lowest interest rates</p>
+        <PageSection background="gray">
+          <Card className="text-center">
+            <div className="bg-gradient-to-r from-orange-500 to-red-600 rounded-lg p-6 text-white">
+              <h3 className="text-xl font-bold mb-2">Car Loans</h3>
+              <p className="opacity-90">Get instant approval with lowest interest rates</p>
             </div>
-          </div>
-        </div>
+          </Card>
+        </PageSection>
         
-        {/* YouTube Video Player Section */}
-        <YouTubeVideoPlayer />
+        <PageSection background="white">
+          <YouTubeVideoPlayer />
+        </PageSection>
         
-        {/* Comparison Box Section */}
-        <ComparisonBox />
+        <PageSection background="gray">
+          <ComparisonBox />
+        </PageSection>
         
-        {/* Consultancy Ad Section */}
-        <ConsultancyAd />
+        <PageSection background="white">
+          <ConsultancyAd />
+        </PageSection>
         
-        {/* Ad Space 4 */}
-        <div className="py-4">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg p-4 text-white text-center">
-              <h3 className="font-bold mb-2">Car Accessories</h3>
-              <p className="text-sm opacity-90">Premium accessories for your dream car</p>
-            </div>
-          </div>
-        </div>
-        
-        {/* Main Ad Spaces Component */}
-        <AdSpaces />
+        <PageSection background="gray">
+          <AdSpaces />
+        </PageSection>
       </main>
       
       <Footer />

@@ -14,6 +14,8 @@ import AdSpaces from '@/components/home/AdSpaces'
 import FeedbackBox from '@/components/brand/FeedbackBox'
 import CarFilters from '@/components/brand/CarFilters'
 import Footer from '@/components/Footer'
+import PageSection from '@/components/common/PageSection'
+import PageHeader from '@/components/common/PageHeader'
 
 interface BrandPageProps {
   params: {
@@ -64,84 +66,102 @@ export default function BrandPage({ params }: BrandPageProps) {
     notFound()
   }
 
+  const breadcrumbs = [
+    { label: 'Home', href: '/' },
+    { label: 'Brands', href: '/brands' },
+    { label: brand.name }
+  ]
+
   return (
     <div className="min-h-screen bg-gray-50">
       <main>
-        {/* 1. Brand Header */}
-        <SafeComponent name="BrandHeader">
-          <BrandHeader brand={params.brand} />
-        </SafeComponent>
+        <PageHeader 
+          title={`${brand.name} Cars`}
+          subtitle={`Explore ${brand.name} car models, prices, and reviews`}
+          breadcrumbs={breadcrumbs}
+          background="white"
+        />
         
-        {/* 2. SEO Text */}
-        <SafeComponent name="SEOText">
-          <SEOText brand={params.brand} />
-        </SafeComponent>
+        <PageSection background="gray">
+          <SafeComponent name="SEOText">
+            <SEOText brand={params.brand} />
+          </SafeComponent>
+        </PageSection>
         
-        {/* 3. Filters */}
-        <SafeComponent name="CarFilters">
-          <CarFilters />
-        </SafeComponent>
+        <PageSection background="white">
+          <SafeComponent name="CarFilters">
+            <CarFilters />
+          </SafeComponent>
+        </PageSection>
         
-        {/* 4. Cars List */}
-        <SafeComponent name="BrandCarsList">
-          <BrandCarsList brand={params.brand} />
-        </SafeComponent>
+        <PageSection background="gray">
+          <SafeComponent name="BrandCarsList">
+            <BrandCarsList brand={params.brand} />
+          </SafeComponent>
+        </PageSection>
         
-        {/* 5. Upcoming Cars */}
-        <SafeComponent name="BrandUpcomingCars">
-          <BrandUpcomingCars brandName={params.brand} />
-        </SafeComponent>
+        <PageSection background="white">
+          <SafeComponent name="BrandUpcomingCars">
+            <BrandUpcomingCars brandName={params.brand} />
+          </SafeComponent>
+        </PageSection>
         
-        {/* 6. Compare Cars */}
-        <SafeComponent name="BrandCompareBox">
-          <BrandCompareBox brandName={params.brand} />
-        </SafeComponent>
+        <PageSection background="gray">
+          <SafeComponent name="BrandCompareBox">
+            <BrandCompareBox brandName={params.brand} />
+          </SafeComponent>
+        </PageSection>
         
-        {/* 7. Alternative Brands */}
-        <SafeComponent name="AlternativeBrands">
-          <AlternativeBrands currentBrand={params.brand} />
-        </SafeComponent>
+        <PageSection background="white">
+          <SafeComponent name="AlternativeBrands">
+            <AlternativeBrands currentBrand={params.brand} />
+          </SafeComponent>
+        </PageSection>
         
-        {/* 8. Brand News */}
-        <SafeComponent name="BrandNews">
-          <BrandNews brandName={params.brand} />
-        </SafeComponent>
+        <PageSection background="gray">
+          <SafeComponent name="BrandNews">
+            <BrandNews brandName={params.brand} />
+          </SafeComponent>
+        </PageSection>
         
-        {/* 9. YouTube Section */}
-        <SafeComponent name="BrandYouTube">
-          <BrandYouTube brandName={params.brand} />
-        </SafeComponent>
+        <PageSection background="white">
+          <SafeComponent name="BrandYouTube">
+            <BrandYouTube brandName={params.brand} />
+          </SafeComponent>
+        </PageSection>
         
-        {/* 10. FAQ Section */}
-        <SafeComponent name="BrandFAQ">
-          <BrandFAQ brandName={params.brand} />
-        </SafeComponent>
+        <PageSection background="gray">
+          <SafeComponent name="BrandFAQ">
+            <BrandFAQ brandName={params.brand} />
+          </SafeComponent>
+        </PageSection>
         
-        {/* 11. Brand User Reviews */}
-        <SafeComponent name="BrandUserReviews">
-          <BrandUserReviews brandName={params.brand} />
-        </SafeComponent>
+        <PageSection background="white">
+          <SafeComponent name="BrandUserReviews">
+            <BrandUserReviews brandName={params.brand} />
+          </SafeComponent>
+        </PageSection>
 
-        {/* 12. Consultancy Ad */}
-        <SafeComponent name="ConsultancyAd">
-          <ConsultancyAd />
-        </SafeComponent>
+        <PageSection background="gray">
+          <SafeComponent name="ConsultancyAd">
+            <ConsultancyAd />
+          </SafeComponent>
+        </PageSection>
 
-        {/* 13. Ad Spaces */}
-        <SafeComponent name="AdSpaces">
-          <AdSpaces />
-        </SafeComponent>
+        <PageSection background="white">
+          <SafeComponent name="AdSpaces">
+            <AdSpaces />
+          </SafeComponent>
+        </PageSection>
 
-        {/* 14. Feedback Box */}
-        <SafeComponent name="FeedbackBox">
-          <FeedbackBox brandName={params.brand} />
-        </SafeComponent>
-
-        {/* 15. Footer */}
-        <SafeComponent name="Footer">
-          <Footer />
-        </SafeComponent>
+        <PageSection background="gray">
+          <SafeComponent name="FeedbackBox">
+            <FeedbackBox brandName={params.brand} />
+          </SafeComponent>
+        </PageSection>
       </main>
+      
+      <Footer />
     </div>
   )
 }
