@@ -12,6 +12,7 @@ import ConsultancyAd from '@/components/home/ConsultancyAd'
 import AdSpaces from '@/components/home/AdSpaces'
 import PageSection from '@/components/common/PageSection'
 import Card from '@/components/common/Card'
+import CarComparison from '@/components/common/CarComparison'
 
 export default function HomePage() {
   return (
@@ -77,6 +78,11 @@ export default function HomePage() {
         <PageSection background="gray">
           <ComparisonBox />
         </PageSection>
+        
+        <CarComparison 
+          title="Compare Popular Cars"
+          backgroundColor="white"
+        />
         
         <PageSection background="white">
           <ConsultancyAd />

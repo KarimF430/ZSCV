@@ -10,7 +10,6 @@ import ModelSummarySection from './ModelSummarySection'
 import EngineHighlightsSection from './EngineHighlightsSection'
 import MileageInformation from './MileageInformation'
 import SimilarCarsSection from './SimilarCarsSection'
-import CarComparisonSection from './CarComparisonSection'
 import ModelNewsSection from './ModelNewsSection'
 import YouTubeVideosSection from './YouTubeVideosSection'
 import FAQSection from './FAQSection'
@@ -22,6 +21,7 @@ import FeedbackSection from './FeedbackSection'
 import PageSection from '../common/PageSection'
 import PageHeader from '../common/PageHeader'
 import Card from '../common/Card'
+import CarComparison from '../common/CarComparison'
 
 // Mock data
 const mockCarData = {
@@ -895,42 +895,30 @@ const CarModelPage = () => {
         />
 
         {/* Car Comparison Section */}
-        <CarComparisonSection 
-          comparisonCars={[
+        <CarComparison 
+          title="Compare with Similar Cars"
+          backgroundColor="gray"
+          cars={[
             {
               id: '1',
               name: 'Tucson',
               brand: 'Hyundai',
-              price: '7.99 - 15.96 Lakhs',
-              image: ''
+              priceRange: '₹7.99 - 13.96 Lakhs',
+              image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=250&fit=crop&auto=format'
             },
             {
               id: '2',
               name: 'Nexon',
               brand: 'Tata',
-              price: '7.70 - 14.18 Lakhs',
-              image: ''
+              priceRange: '₹7.70 - 14.18 Lakhs',
+              image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=400&h=250&fit=crop&auto=format'
             },
             {
               id: '3',
-              name: 'Tucson',
-              brand: 'Hyundai',
-              price: '7.99 - 15.96 Lakhs',
-              image: ''
-            },
-            {
-              id: '4',
               name: 'Creta',
               brand: 'Hyundai',
-              price: '10.87 - 18.73 Lakhs',
-              image: ''
-            },
-            {
-              id: '5',
-              name: 'Seltos',
-              brand: 'Kia',
-              price: '10.90 - 18.45 Lakhs',
-              image: ''
+              priceRange: '₹10.87 - 18.73 Lakhs',
+              image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=250&fit=crop&auto=format'
             }
           ]}
         />

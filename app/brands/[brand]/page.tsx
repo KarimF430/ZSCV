@@ -16,6 +16,7 @@ import CarFilters from '@/components/brand/CarFilters'
 import Footer from '@/components/Footer'
 import PageSection from '@/components/common/PageSection'
 import PageHeader from '@/components/common/PageHeader'
+import CarComparison from '@/components/common/CarComparison'
 
 interface BrandPageProps {
   params: {
@@ -106,11 +107,33 @@ export default function BrandPage({ params }: BrandPageProps) {
           </SafeComponent>
         </PageSection>
         
-        <PageSection background="gray">
-          <SafeComponent name="BrandCompareBox">
-            <BrandCompareBox brandName={params.brand} />
-          </SafeComponent>
-        </PageSection>
+        <CarComparison 
+          title={`Compare ${brand.name} Cars`}
+          backgroundColor="gray"
+          cars={[
+            {
+              id: '1',
+              name: brand.models[0] || 'Swift',
+              brand: brand.name,
+              priceRange: '₹5.85 - 8.67 Lakhs',
+              image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=250&fit=crop&auto=format'
+            },
+            {
+              id: '2', 
+              name: brand.models[1] || 'Baleno',
+              brand: brand.name,
+              priceRange: '₹6.61 - 9.88 Lakhs',
+              image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=400&h=250&fit=crop&auto=format'
+            },
+            {
+              id: '3',
+              name: brand.models[2] || 'Vitara Brezza', 
+              brand: brand.name,
+              priceRange: '₹8.34 - 13.96 Lakhs',
+              image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=250&fit=crop&auto=format'
+            }
+          ]}
+        />
         
         <PageSection background="white">
           <SafeComponent name="AlternativeBrands">
