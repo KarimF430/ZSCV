@@ -47,3 +47,8 @@ backend/uploads
 
 # skip APP102 folder
 APP102/
+
+# local cache
+.local/
+# env root
+.env
