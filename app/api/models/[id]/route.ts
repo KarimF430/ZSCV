@@ -5,10 +5,10 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     console.log(`🚀 API Route: GET /api/models/${id}`);
     
     // Forward request to backend server
@@ -34,7 +34,8 @@ export async function GET(
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    console.error(`❌ Error in GET /api/models/${params.id}:`, error);
+    const { id } = await params;
+    console.error(`❌ Error in GET /api/models/${id}:`, error);
     
     return NextResponse.json({
       success: false,
@@ -51,10 +52,10 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     console.log(`🗑️ API Route: DELETE /api/models/${id}`);
     
     // Forward request to backend server
@@ -83,7 +84,8 @@ export async function DELETE(
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    console.error(`❌ Error in DELETE /api/models/${params.id}:`, error);
+    const { id } = await params;
+    console.error(`❌ Error in DELETE /api/models/${id}:`, error);
     
     return NextResponse.json({
       success: false,
@@ -100,10 +102,10 @@ export async function DELETE(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     console.log(`🔄 API Route: PATCH /api/models/${id}`);
     console.log('📝 Update data received:', JSON.stringify(body, null, 2));
@@ -140,7 +142,8 @@ export async function PATCH(
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    console.error(`❌ Error in PATCH /api/models/${params.id}:`, error);
+    const { id } = await params;
+    console.error(`❌ Error in PATCH /api/models/${id}:`, error);
     
     return NextResponse.json({
       success: false,

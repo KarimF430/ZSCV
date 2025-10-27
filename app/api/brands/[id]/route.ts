@@ -12,10 +12,10 @@ const CACHE_HEADERS = {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     
     if (!id) {
       return NextResponse.json({
@@ -52,7 +52,8 @@ export async function GET(
 
     return response;
   } catch (error) {
-    console.error(`❌ Error in GET /api/brands/${params.id}:`, error);
+    const { id } = await params;
+    console.error(`❌ Error in GET /api/brands/${id}:`, error);
     
     const status = error instanceof Error && error.message.includes('404') ? 404 : 500;
     
