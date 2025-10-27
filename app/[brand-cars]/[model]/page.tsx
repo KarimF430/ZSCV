@@ -4,15 +4,16 @@ import { notFound } from 'next/navigation'
 import { generateModelSEO } from '@/lib/seo'
 
 interface ModelPageProps {
-  params: {
+  params: Promise<{
     'brand-cars': string
     model: string
-  }
+  }>
 }
 
 export async function generateMetadata({ params }: ModelPageProps): Promise<Metadata> {
-  const brandSlug = params['brand-cars'].replace('-cars', '')
-  const modelSlug = params.model
+  const resolvedParams = await params
+  const brandSlug = resolvedParams['brand-cars'].replace('-cars', '')
+  const modelSlug = resolvedParams.model
   
   // Convert slugs to display names
   const brandName = brandSlug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
@@ -310,7 +311,8 @@ async function getModelData(brandSlug: string, modelSlug: string) {
 }
 
 export default async function ModelPage({ params }: ModelPageProps) {
-  const modelData = await getModelData(params['brand-cars'], params.model)
+  const resolvedParams = await params
+  const modelData = await getModelData(resolvedParams['brand-cars'], resolvedParams.model)
   
   if (!modelData) {
     notFound()

@@ -19,13 +19,14 @@ import CarComparison from '@/components/common/CarComparison'
 import { generateBrandSEO } from '@/lib/seo'
 
 interface BrandPageProps {
-  params: {
+  params: Promise<{
     'brand-cars': string
-  }
+  }>
 }
 
 export async function generateMetadata({ params }: BrandPageProps): Promise<Metadata> {
-  const brandSlug = params['brand-cars'].replace('-cars', '')
+  const resolvedParams = await params
+  const brandSlug = resolvedParams['brand-cars'].replace('-cars', '')
   const brandName = brandSlug.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
   
   return generateBrandSEO(brandName)
@@ -100,12 +101,6 @@ async function fetchBrandModels(brandId: string) {
     console.error('❌ Error fetching models:', error);
     return { brand: null, models: [] };
   }
-}
-
-interface BrandPageProps {
-  params: Promise<{
-    'brand-cars': string
-  }>
 }
 
 // Mock brand data
