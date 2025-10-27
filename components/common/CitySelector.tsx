@@ -61,6 +61,10 @@ export default function CitySelector({ isOpen, onClose, selectedCity, onCitySele
   )
 
   const handleCitySelect = (cityName: string) => {
+    // Save to localStorage for persistence across pages
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('selectedCity', cityName)
+    }
     onCitySelect(cityName)
     onClose()
   }

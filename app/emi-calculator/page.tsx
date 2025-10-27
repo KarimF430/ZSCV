@@ -1,7 +1,9 @@
 import { Metadata } from 'next'
 import EMICalculatorTool from '@/components/emi/EMICalculatorTool'
+import { staticPageSEO } from '@/lib/seo'
 
 export const metadata: Metadata = {
+  ...staticPageSEO.emiCalculatorTool,
   title: 'Car EMI Calculator - Calculate Monthly Payments | MotorOctane',
   description: 'Calculate EMI for any car variant with detailed amortization table. Compare loan options and find the best financing plan for your car purchase.',
   keywords: 'car EMI calculator, car loan calculator, monthly payment calculator, car finance, auto loan EMI, amortization table',

@@ -185,7 +185,7 @@ export default function PriceBreakupTool() {
                   <p className="text-sm text-gray-600">
                     {selectedCar.engine} • {selectedCar.fuelType} • {selectedCar.transmission}
                   </p>
-                  <p className="text-sm text-primary-600 font-medium">
+                  <p className="text-sm text-red-600 font-medium">
                     Ex-showroom: {formatLakh(selectedCar.exShowroomPrice)}
                   </p>
                 </div>
@@ -207,7 +207,7 @@ export default function PriceBreakupTool() {
               <select
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}
-                className="w-full pl-10 pr-4 py-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none"
+                className="w-full pl-10 pr-4 py-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent appearance-none"
               >
                 {cities.map((city) => (
                   <option key={city.name} value={city.name}>
@@ -243,7 +243,7 @@ export default function PriceBreakupTool() {
                   placeholder="Search car variants..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -269,7 +269,7 @@ export default function PriceBreakupTool() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-primary-600">
+                      <p className="font-semibold text-red-600">
                         {formatLakh(car.exShowroomPrice)}
                       </p>
                       <p className="text-xs text-gray-500">Ex-showroom</p>
@@ -297,7 +297,7 @@ export default function PriceBreakupTool() {
                 value={accessories}
                 onChange={(e) => setAccessories(Number(e.target.value) || 0)}
                 placeholder="Enter accessories cost"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               />
               <p className="text-xs text-gray-500 mt-1">
                 Floor mats, seat covers, music system, etc.
@@ -313,7 +313,7 @@ export default function PriceBreakupTool() {
                 value={extendedWarranty}
                 onChange={(e) => setExtendedWarranty(Number(e.target.value) || 0)}
                 placeholder="Enter warranty cost"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               />
               <p className="text-xs text-gray-500 mt-1">
                 Additional warranty coverage beyond standard
@@ -343,8 +343,8 @@ export default function PriceBreakupTool() {
               {/* Ex-showroom Price */}
               <div className="flex items-center justify-between py-3 border-b border-gray-100">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <IndianRupee className="h-4 w-4 text-blue-600" />
+                  <div className="w-8 h-8 bg-gradient-to-r from-red-100 to-orange-100 rounded-full flex items-center justify-center">
+                    <IndianRupee className="h-4 w-4 text-red-600" />
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">Ex-showroom Price</p>
@@ -357,8 +357,8 @@ export default function PriceBreakupTool() {
               {/* RTO Charges */}
               <div className="flex items-center justify-between py-3 border-b border-gray-100">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <FileText className="h-4 w-4 text-green-600" />
+                  <div className="w-8 h-8 bg-gradient-to-r from-red-100 to-orange-100 rounded-full flex items-center justify-center">
+                    <FileText className="h-4 w-4 text-red-600" />
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">RTO Charges</p>
@@ -371,8 +371,8 @@ export default function PriceBreakupTool() {
               {/* Road Tax */}
               <div className="flex items-center justify-between py-3 border-b border-gray-100">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                    <Calculator className="h-4 w-4 text-yellow-600" />
+                  <div className="w-8 h-8 bg-gradient-to-r from-red-100 to-orange-100 rounded-full flex items-center justify-center">
+                    <Calculator className="h-4 w-4 text-red-600" />
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">Road Tax</p>
@@ -385,8 +385,8 @@ export default function PriceBreakupTool() {
               {/* Insurance */}
               <div className="flex items-center justify-between py-3 border-b border-gray-100">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                    <Info className="h-4 w-4 text-purple-600" />
+                  <div className="w-8 h-8 bg-gradient-to-r from-red-100 to-orange-100 rounded-full flex items-center justify-center">
+                    <Info className="h-4 w-4 text-red-600" />
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">Insurance</p>
@@ -413,8 +413,8 @@ export default function PriceBreakupTool() {
               {/* FASTag */}
               <div className="flex items-center justify-between py-3 border-b border-gray-100">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                    <FileText className="h-4 w-4 text-indigo-600" />
+                  <div className="w-8 h-8 bg-gradient-to-r from-red-100 to-orange-100 rounded-full flex items-center justify-center">
+                    <FileText className="h-4 w-4 text-red-600" />
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">FASTag</p>
@@ -457,16 +457,16 @@ export default function PriceBreakupTool() {
               )}
 
               {/* Total On-road Price */}
-              <div className="flex items-center justify-between py-4 bg-primary-50 rounded-lg px-4 mt-6">
+              <div className="flex items-center justify-between py-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-lg px-4 mt-6">
                 <div>
-                  <p className="text-lg font-bold text-primary-900">Total On-road Price</p>
-                  <p className="text-sm text-primary-700">Final price in {selectedCity}</p>
+                  <p className="text-lg font-bold text-gray-900">Total On-road Price</p>
+                  <p className="text-sm text-gray-700">Final price in {selectedCity}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-primary-600">
+                  <p className="text-2xl font-bold text-red-600">
                     {formatCurrency(priceBreakup.totalOnRoad)}
                   </p>
-                  <p className="text-sm text-primary-600">
+                  <p className="text-sm text-red-600">
                     {formatLakh(priceBreakup.totalOnRoad)}
                   </p>
                 </div>
@@ -475,7 +475,7 @@ export default function PriceBreakupTool() {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 mt-6">
-              <button className="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2">
+              <button className="flex-1 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2">
                 <FileText className="h-5 w-5" />
                 <span>Get Price Quote</span>
               </button>
@@ -512,7 +512,7 @@ export default function PriceBreakupTool() {
             </p>
             <button
               onClick={() => setShowCarSelector(true)}
-              className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
+              className="bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
             >
               Choose Car Variant
             </button>

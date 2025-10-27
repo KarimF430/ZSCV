@@ -153,7 +153,7 @@ export default function NewsListing() {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'news': return 'bg-blue-100 text-blue-800'
+      case 'news': return 'bg-gradient-to-r from-red-100 to-orange-100 text-red-800'
       case 'review': return 'bg-green-100 text-green-800'
       case 'guide': return 'bg-purple-100 text-purple-800'
       case 'comparison': return 'bg-orange-100 text-orange-800'
@@ -189,7 +189,7 @@ export default function NewsListing() {
                 placeholder="Search articles, reviews, and guides..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -213,7 +213,7 @@ export default function NewsListing() {
                 onClick={() => setSelectedCategory(category.value)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   selectedCategory === category.value
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-gradient-to-r from-red-600 to-orange-500 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -303,7 +303,7 @@ export default function NewsListing() {
                     </div>
                     <Link
                       href={`/news/${article.id}`}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                      className="bg-gradient-to-r from-red-600 to-orange-500 text-white px-4 py-2 rounded-lg hover:from-red-700 hover:to-orange-600 transition-colors font-medium"
                     >
                       Read More
                     </Link>
@@ -356,7 +356,7 @@ export default function NewsListing() {
                     </div>
                     <Link
                       href={`/news/${article.id}`}
-                      className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                      className="text-red-600 hover:text-orange-600 text-sm font-medium"
                     >
                       Read More
                     </Link>
@@ -381,7 +381,7 @@ export default function NewsListing() {
               setSearchQuery('')
               setSelectedCategory('')
             }}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="bg-gradient-to-r from-red-600 to-orange-500 text-white px-4 py-2 rounded-lg hover:from-red-700 hover:to-orange-600 transition-colors"
           >
             Clear Filters
           </button>

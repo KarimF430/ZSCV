@@ -1,7 +1,29 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['localhost', 'your-domain.com'],
+    // Use remotePatterns (recommended) and keep formats
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.railway.app',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.onrender.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.vercel.app',
+      },
+    ],
     formats: ['image/webp', 'image/avif'],
   },
   async rewrites() {
@@ -12,28 +34,29 @@ const nextConfig = {
       },
     ];
   },
-  // Allow all hosts for Replit environment
+  // Headers for development
   async headers() {
     return [
       {
         source: '/(.*)',
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'no-cache, no-store, must-revalidate',
-          },
-          {
             key: 'X-Frame-Options',
-            value: 'ALLOWALL',
+            value: 'SAMEORIGIN',
           },
         ],
       },
     ];
   },
-  // Configure for Replit proxy environment
-  // Disable host checking for Replit iframe
-  devIndicators: {
-    buildActivity: false,
+  // Webpack configuration for module resolution
+  webpack: (config, { isServer }) => {
+    // Simple fix for lucide-react module resolution
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'lucide-react': require.resolve('lucide-react'),
+    }
+    
+    return config
   },
 };
 

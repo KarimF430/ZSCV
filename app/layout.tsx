@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import Header from '@/components/common/Header'
+import Header from '@/components/Header'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -13,9 +13,9 @@ export const viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://motoroctane.com'),
-  title: 'MotorOctane - New Cars in India | Car Prices, Reviews & Specifications',
-  description: 'Find new cars in India with latest prices, specifications, reviews, and comparisons. Explore cars by budget, brand, and fuel type. Get EMI calculator and best deals.',
-  keywords: 'new cars India, car prices, car specifications, car reviews, EMI calculator, car comparison, car deals',
+  title: 'MotorOctane - New Cars in India | Latest Prices, Reviews & Comparisons',
+  description: 'Discover new cars in India with AI-powered search. Compare latest prices, detailed specifications, expert reviews, and get the best deals from authorized dealers across India.',
+  keywords: 'new cars India, car prices 2024, car specifications, car reviews, car comparison, EMI calculator, car deals, Maruti Suzuki, Hyundai, Tata, Mahindra',
   authors: [{ name: 'MotorOctane' }],
   creator: 'MotorOctane',
   publisher: 'MotorOctane',
@@ -40,8 +40,8 @@ export const metadata: Metadata = {
     locale: 'en_IN',
     url: 'https://motoroctane.com',
     siteName: 'MotorOctane',
-    title: 'MotorOctane - New Cars in India',
-    description: 'Find new cars in India with latest prices, specifications, reviews, and comparisons.',
+    title: 'MotorOctane - New Cars in India | Latest Prices & Reviews',
+    description: 'Discover new cars in India with AI-powered search. Compare latest prices, detailed specifications, and expert reviews from authorized dealers.',
     images: [
       {
         url: '/og-image.jpg',
@@ -53,8 +53,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MotorOctane - New Cars in India',
-    description: 'Find new cars in India with latest prices, specifications, reviews, and comparisons.',
+    title: 'MotorOctane - New Cars in India | Latest Prices & Reviews',
+    description: 'Discover new cars in India with AI-powered search. Compare latest prices, detailed specifications, and expert reviews.',
     images: ['/og-image.jpg'],
   },
   alternates: {
@@ -75,7 +75,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <meta name="theme-color" content="#2563eb" />
+        <meta name="theme-color" content="#dc2626" />
       </head>
       <body className={`${inter.className} min-h-screen bg-gray-50`}>
         <Header />

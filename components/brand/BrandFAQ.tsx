@@ -1,103 +1,159 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import { FrontendBrand } from '@/lib/brand-api'
 
 interface FAQ {
-  id: string
   question: string
   answer: string
 }
 
 interface BrandFAQProps {
   brandName: string
+  brandId?: string
 }
 
-export default function BrandFAQ({ brandName }: BrandFAQProps) {
+export default function BrandFAQ({ brandName, brandId }: BrandFAQProps) {
   const [openFAQ, setOpenFAQ] = useState<string | null>(null)
+  const [faqs, setFaqs] = useState<FAQ[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const getFAQsByBrand = (brand: string): FAQ[] => {
-    const faqData: Record<string, FAQ[]> = {
-      maruti: [
-        { id: '1', question: `What is the price range of ${brand.charAt(0).toUpperCase() + brand.slice(1)} cars?`, answer: `${brand.charAt(0).toUpperCase() + brand.slice(1)} cars are available in a wide price range starting from ₹3.99 lakh for Alto K10 and going up to ₹19.65 lakh for Grand Vitara, making them accessible to various budget segments.` },
-        { id: '2', question: `Which ${brand.charAt(0).toUpperCase() + brand.slice(1)} car has the best mileage?`, answer: `The ${brand.charAt(0).toUpperCase() + brand.slice(1)} Grand Vitara Hybrid offers the best mileage with up to 27.97 kmpl, followed by Alto K10 with 24.39 kmpl and Dzire with 24.12 kmpl.` },
-        { id: '3', question: `Are ${brand.charAt(0).toUpperCase() + brand.slice(1)} cars reliable?`, answer: `Yes, ${brand.charAt(0).toUpperCase() + brand.slice(1)} cars are known for their reliability, low maintenance costs, and excellent after-sales service network across India with over 3,000 service centers.` },
-        { id: '4', question: `Which ${brand.charAt(0).toUpperCase() + brand.slice(1)} car is best for families?`, answer: `For families, the ${brand.charAt(0).toUpperCase() + brand.slice(1)} Ertiga and XL6 are excellent choices for larger families, while Swift, Baleno, and Dzire are perfect for small to medium families.` },
-        { id: '5', question: `Do ${brand.charAt(0).toUpperCase() + brand.slice(1)} cars have good resale value?`, answer: `${brand.charAt(0).toUpperCase() + brand.slice(1)} cars typically have excellent resale value due to their popularity, reliability, and widespread service network, making them a smart investment choice.` }
-      ],
-      hyundai: [
-        { id: '1', question: `What makes ${brand.charAt(0).toUpperCase() + brand.slice(1)} cars special?`, answer: `${brand.charAt(0).toUpperCase() + brand.slice(1)} cars are known for their premium features, advanced technology, stylish design, and excellent build quality with industry-leading warranty coverage.` },
-        { id: '2', question: `Which is the most popular ${brand.charAt(0).toUpperCase() + brand.slice(1)} car in India?`, answer: `The ${brand.charAt(0).toUpperCase() + brand.slice(1)} Creta is the most popular model, leading the compact SUV segment with its premium features, spacious interior, and strong performance.` },
-        { id: '3', question: `Are ${brand.charAt(0).toUpperCase() + brand.slice(1)} cars expensive to maintain?`, answer: `${brand.charAt(0).toUpperCase() + brand.slice(1)} cars have reasonable maintenance costs with comprehensive service packages and genuine parts availability across their extensive service network.` },
-        { id: '4', question: `Does ${brand.charAt(0).toUpperCase() + brand.slice(1)} offer electric cars?`, answer: `Yes, ${brand.charAt(0).toUpperCase() + brand.slice(1)} offers the Kona Electric and has announced plans for more electric vehicles including Creta EV and other models in the coming years.` },
-        { id: '5', question: `What is ${brand.charAt(0).toUpperCase() + brand.slice(1)}'s warranty coverage?`, answer: `${brand.charAt(0).toUpperCase() + brand.slice(1)} offers a comprehensive 3-year/unlimited km warranty on most models, with extended warranty options available for additional peace of mind.` }
-      ],
-      tata: [
-        { id: '1', question: `Are ${brand.charAt(0).toUpperCase() + brand.slice(1)} cars safe?`, answer: `Yes, ${brand.charAt(0).toUpperCase() + brand.slice(1)} cars are renowned for their safety with multiple models receiving 5-star Global NCAP ratings, including Nexon, Altroz, and Punch.` },
-        { id: '2', question: `Which ${brand.charAt(0).toUpperCase() + brand.slice(1)} electric car should I buy?`, answer: `The ${brand.charAt(0).toUpperCase() + brand.slice(1)} Nexon EV is the most popular choice with proven reliability, while Tigor EV offers sedan comfort and upcoming models like Curvv EV promise more options.` },
-        { id: '3', question: `What is ${brand.charAt(0).toUpperCase() + brand.slice(1)}'s service network like?`, answer: `${brand.charAt(0).toUpperCase() + brand.slice(1)} has an extensive service network with over 1,200 service centers across India, ensuring convenient maintenance and support.` },
-        { id: '4', question: `Are ${brand.charAt(0).toUpperCase() + brand.slice(1)} cars good for long drives?`, answer: `Yes, ${brand.charAt(0).toUpperCase() + brand.slice(1)} cars like Harrier and Safari are excellent for long drives with comfortable seating, good ride quality, and robust build quality.` },
-        { id: '5', question: `What is the fuel efficiency of ${brand.charAt(0).toUpperCase() + brand.slice(1)} cars?`, answer: `${brand.charAt(0).toUpperCase() + brand.slice(1)} cars offer competitive fuel efficiency with Altroz delivering up to 25.11 kmpl, Tiago up to 23.84 kmpl, and Nexon up to 17.57 kmpl.` }
-      ]
+  useEffect(() => {
+    const fetchBrandFAQs = async () => {
+      try {
+        setLoading(true)
+        console.log('🚀 BrandFAQ: Starting FAQ fetch for brand:', brandName, 'ID:', brandId)
+        
+        // First, get all brands to find the brand by name
+        const response = await fetch('/api/brands', {
+          cache: 'no-cache',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        })
+        
+        console.log('📡 BrandFAQ: Response status:', response.status)
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+        }
+        
+        const result = await response.json()
+        console.log('📊 BrandFAQ: Full API result:', JSON.stringify(result, null, 2))
+        
+        if (result.success && result.data && Array.isArray(result.data)) {
+          console.log('🔍 BrandFAQ: Searching for brand:', brandName, 'in', result.data.length, 'brands')
+          
+          // Find the brand by name (case-insensitive)
+          const brand = result.data.find((b: FrontendBrand) => {
+            const match = b.name.toLowerCase() === brandName.toLowerCase() ||
+                         b.name.toLowerCase().includes(brandName.toLowerCase())
+            console.log(`🔍 Comparing "${b.name}" with "${brandName}": ${match}`)
+            return match
+          })
+          
+          console.log('🎯 BrandFAQ: Found brand:', brand)
+          
+          if (brand) {
+            console.log('📋 BrandFAQ: Brand FAQs:', brand.faqs)
+            if (brand.faqs && Array.isArray(brand.faqs) && brand.faqs.length > 0) {
+              setFaqs(brand.faqs)
+              console.log(`✅ BrandFAQ: Successfully loaded ${brand.faqs.length} FAQs for ${brand.name}`)
+            } else {
+              console.log(`⚠️ BrandFAQ: Brand found but no FAQs available`)
+              setFaqs([])
+            }
+          } else {
+            console.log(`❌ BrandFAQ: Brand "${brandName}" not found in API response`)
+            setFaqs([])
+          }
+        } else {
+          throw new Error(result.error || 'Invalid API response format')
+        }
+      } catch (err) {
+        console.error('❌ BrandFAQ: Error fetching FAQs:', err)
+        setError(err instanceof Error ? err.message : 'Failed to load FAQs')
+        setFaqs([])
+      } finally {
+        setLoading(false)
+      }
     }
-    return faqData[brand] || []
-  }
 
-  const faqs = getFAQsByBrand(brandName)
+    if (brandName) {
+      fetchBrandFAQs()
+    } else {
+      console.log('⚠️ BrandFAQ: No brand name provided')
+      setLoading(false)
+    }
+  }, [brandName, brandId])
 
   const toggleFAQ = (faqId: string) => {
     setOpenFAQ(openFAQ === faqId ? null : faqId)
   }
 
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="py-12 bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {faqs.length === 0 ? (
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Frequently Asked Questions
-            </h2>
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            {brandName} FAQ
+          </h2>
+          <p className="text-base text-gray-600">
+            {loading ? 'Loading FAQs from backend...' : 
+             error ? `Error: ${error}` :
+             faqs.length > 0 ? `${faqs.length} questions about ${brandName} cars` : 
+             'No FAQs available from backend'}
+          </p>
+        </div>
+
+        {loading ? (
+          <div className="space-y-4">
+            {[...Array(5)].map((_, index) => (
+              <div key={index} className="bg-white rounded-lg border border-gray-200 p-6 animate-pulse">
+                <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+              </div>
+            ))}
+          </div>
+        ) : error ? (
+          <div className="text-center py-8">
+            <div className="text-red-600 mb-4">⚠️ {error}</div>
+            <p className="text-gray-600">Unable to load FAQs at this time.</p>
+          </div>
+        ) : faqs.length === 0 ? (
+          <div className="text-center py-8">
             <p className="text-gray-600">
-              No FAQs available yet. Check back soon for answers to common questions!
+              No FAQs available for {brandName} yet. Check back soon for answers to common questions!
             </p>
           </div>
         ) : (
-          <>
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                Frequently Asked Questions
-              </h2>
-              <p className="text-gray-600">
-                Common questions about {brandName.charAt(0).toUpperCase() + brandName.slice(1)} cars
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {faqs.map((faq) => (
-                <div key={faq.id} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                  <button
-                    onClick={() => toggleFAQ(faq.id)}
-                    className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
-                  >
-                    <span className="font-medium text-gray-900 pr-4">{faq.question}</span>
-                    {openFAQ === faq.id ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
-                    )}
-                  </button>
-                  
-                  {openFAQ === faq.id && (
-                    <div className="px-6 pb-4">
-                      <div className="border-t border-gray-100 pt-4">
-                        <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
-                      </div>
-                    </div>
+          <div className="space-y-4">
+            {faqs.map((faq, index) => (
+              <div key={index} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                <button
+                  onClick={() => toggleFAQ(index.toString())}
+                  className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                >
+                  <span className="font-medium text-gray-900 pr-4">{faq.question}</span>
+                  {openFAQ === index.toString() ? (
+                    <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                  ) : (
+                    <ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
                   )}
-                </div>
-              ))}
-            </div>
-          </>
+                </button>
+                
+                {openFAQ === index.toString() && (
+                  <div className="px-6 pb-4">
+                    <div className="border-t border-gray-100 pt-4">
+                      <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </section>

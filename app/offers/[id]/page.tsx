@@ -6,9 +6,9 @@ import Footer from '@/components/Footer'
 import Link from 'next/link'
 
 interface OfferDetailPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 // Mock offer data - in real app, this would be fetched from database
@@ -58,7 +58,8 @@ const getOfferById = (id: string) => {
 }
 
 export async function generateMetadata({ params }: OfferDetailPageProps): Promise<Metadata> {
-  const offer = getOfferById(params.id)
+  const { id } = await params
+  const offer = getOfferById(id)
   
   if (!offer) {
     return {
@@ -74,13 +75,14 @@ export async function generateMetadata({ params }: OfferDetailPageProps): Promis
       title: `${offer.title} - ${offer.brand} ${offer.model}`,
       description: offer.description,
       type: 'website',
-      url: `/offers/${params.id}`,
+      url: `/offers/${id}`,
     },
   }
 }
 
-export default function OfferDetailPage({ params }: OfferDetailPageProps) {
-  const offer = getOfferById(params.id)
+export default async function OfferDetailPage({ params }: OfferDetailPageProps) {
+  const { id } = await params
+  const offer = getOfferById(id)
 
   if (!offer) {
     notFound()

@@ -1,6 +1,6 @@
 'use client'
 
-import { Star, Fuel, Cog, Users, Calendar, Shield } from 'lucide-react'
+import { Calendar, Fuel, Users, Gauge, Shield, Trophy, Star, Settings } from 'lucide-react'
 
 interface CarOverviewProps {
   carName: string
@@ -55,7 +55,7 @@ export default function CarOverview({ carName, brand, price }: CarOverviewProps)
           
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="flex items-center space-x-2 mb-2">
-              <Cog className="h-5 w-5 text-primary-600" />
+              <Settings className="h-5 w-5 text-primary-600" />
               <span className="text-sm font-medium text-gray-700">Engine</span>
             </div>
             <p className="text-lg font-semibold text-gray-900">1498 cc</p>
@@ -71,7 +71,7 @@ export default function CarOverview({ carName, brand, price }: CarOverviewProps)
           
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="flex items-center space-x-2 mb-2">
-              <Award className="h-5 w-5 text-primary-600" />
+              <Trophy className="h-5 w-5 text-primary-600" />
               <span className="text-sm font-medium text-gray-700">Body Type</span>
             </div>
             <p className="text-lg font-semibold text-gray-900">Sedan</p>
@@ -104,7 +104,7 @@ export default function CarOverview({ carName, brand, price }: CarOverviewProps)
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div>
             <h3 className="text-base font-medium text-gray-900 mb-3 flex items-center space-x-2">
-              <Award className="h-4 w-4 text-primary-600" />
+              <Trophy className="h-4 w-4 text-primary-600" />
               <span>Comfort & Convenience</span>
             </h3>
             <ul className="space-y-2">

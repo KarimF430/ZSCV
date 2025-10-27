@@ -263,7 +263,7 @@ export default function SimilarCars({ carData }: SimilarCarsProps) {
               {/* Action Buttons */}
               <div className="flex space-x-2">
                 <Link
-                  href={`/cars/${car.brand.toLowerCase()}/${car.model.toLowerCase()}`}
+                  href={`/cars/${car.brand.toLowerCase().replace(' ', '-')}/${car.model.toLowerCase().replace(' ', '-')}`}
                   className="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm font-medium hover:bg-blue-700 transition-colors text-center"
                 >
                   View Details

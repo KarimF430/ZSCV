@@ -1,215 +1,144 @@
 'use client'
 
-import Link from 'next/link'
-import { ChevronLeft, ChevronRight, IndianRupee, Calendar, Clock, MapPin } from 'lucide-react'
+import { Heart, Calendar, Fuel, Users } from 'lucide-react'
 
-interface UpcomingCar {
+interface Car {
   id: number
   name: string
   brand: string
   image: string
-  expectedPrice: string
-  launchDate: string
+  startingPrice: number
   fuelType: string
-  bodyType: string
-  city: string
+  seating: number
+  launchDate: string
   slug: string
-  isConfirmed: boolean
+  isNew: boolean
 }
 
 export default function UpcomingCars() {
-  // Mock upcoming cars data
-  const upcomingCars: UpcomingCar[] = [
+  // Upcoming cars data - same structure as CarsByBudget
+  const upcomingCars: Car[] = [
     {
       id: 1,
-      name: 'Fronx',
+      name: 'Grand Vitara',
       brand: 'Maruti Suzuki',
-      image: '/cars/fronx.jpg',
-      expectedPrice: '₹7-12 Lakh',
-      launchDate: 'March 2024',
-      fuelType: 'Petrol/CNG',
-      bodyType: 'SUV',
-      city: 'Delhi',
-      slug: 'maruti-suzuki-fronx',
-      isConfirmed: true
+      image: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=400&h=300&fit=crop&crop=center',
+      startingPrice: 1099000,
+      fuelType: 'Petrol/Hybrid',
+      seating: 5,
+      launchDate: 'Launched January 2024',
+      slug: 'maruti-suzuki-grand-vitara',
+      isNew: true
     },
     {
       id: 2,
-      name: 'Exter',
-      brand: 'Hyundai',
-      image: '/cars/exter.jpg',
-      expectedPrice: '₹6-10 Lakh',
-      launchDate: 'April 2024',
-      fuelType: 'Petrol/CNG',
-      bodyType: 'SUV',
-      city: 'Mumbai',
-      slug: 'hyundai-exter',
-      isConfirmed: true
+      name: 'Safari',
+      brand: 'Tata',
+      image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=400&h=300&fit=crop&crop=center',
+      startingPrice: 2999000,
+      fuelType: 'Petrol/Diesel',
+      seating: 7,
+      launchDate: 'Launched March 2024',
+      slug: 'tata-safari',
+      isNew: true
     },
     {
       id: 3,
-      name: 'Punch EV',
-      brand: 'Tata',
-      image: '/cars/punch-ev.jpg',
-      expectedPrice: '₹10-14 Lakh',
-      launchDate: 'May 2024',
-      fuelType: 'Electric',
-      bodyType: 'SUV',
-      city: 'Bangalore',
-      slug: 'tata-punch-ev',
-      isConfirmed: false
+      name: 'Creta',
+      brand: 'Hyundai',
+      image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=300&fit=crop&crop=center',
+      startingPrice: 1199000,
+      fuelType: 'Petrol/Diesel',
+      seating: 5,
+      launchDate: 'Launched February 2024',
+      slug: 'hyundai-creta',
+      isNew: false
     },
     {
       id: 4,
-      name: 'XUV400 Pro',
-      brand: 'Mahindra',
-      image: '/cars/xuv400-pro.jpg',
-      expectedPrice: '₹16-20 Lakh',
-      launchDate: 'June 2024',
-      fuelType: 'Electric',
-      bodyType: 'SUV',
-      city: 'Chennai',
-      slug: 'mahindra-xuv400-pro',
-      isConfirmed: false
-    },
-    {
-      id: 5,
-      name: 'Carens Facelift',
-      brand: 'Kia',
-      image: '/cars/carens-facelift.jpg',
-      expectedPrice: '₹10-18 Lakh',
-      launchDate: 'July 2024',
-      fuelType: 'Petrol/Diesel',
-      bodyType: 'MPV',
-      city: 'Pune',
-      slug: 'kia-carens-facelift',
-      isConfirmed: true
-    },
-    {
-      id: 6,
-      name: 'Elevate',
-      brand: 'Honda',
-      image: '/cars/elevate.jpg',
-      expectedPrice: '₹11-16 Lakh',
-      launchDate: 'August 2024',
-      fuelType: 'Petrol',
-      bodyType: 'SUV',
-      city: 'Hyderabad',
-      slug: 'honda-elevate',
-      isConfirmed: true
-    },
-    {
-      id: 7,
-      name: 'Curvv',
+      name: 'Nexon',
       brand: 'Tata',
-      image: '/cars/curvv.jpg',
-      expectedPrice: '₹12-18 Lakh',
-      launchDate: 'September 2024',
+      image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=300&fit=crop&crop=center',
+      startingPrice: 799000,
       fuelType: 'Petrol/Electric',
-      bodyType: 'SUV Coupe',
-      city: 'Kolkata',
-      slug: 'tata-curvv',
-      isConfirmed: false
+      seating: 5,
+      launchDate: 'Launched April 2024',
+      slug: 'tata-nexon',
+      isNew: true
     }
   ]
 
-  const scrollContainer = (direction: 'left' | 'right') => {
-    const container = document.getElementById('upcoming-cars-scroll')
-    if (container) {
-      const scrollAmount = 300
-      container.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      })
-    }
-  }
-
   return (
-    <section className="py-8">
+    <section className="py-8 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Upcoming Cars</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-8">Upcoming Cars</h2>
         
         {/* Cars Horizontal Scroll */}
         <div className="relative">
-          <button
-            onClick={() => scrollContainer('left')}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50"
-          >
-            <ChevronLeft className="h-5 w-5 text-gray-600" />
-          </button>
-          
-          <button
-            onClick={() => scrollContainer('right')}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50"
-          >
-            <ChevronRight className="h-5 w-5 text-gray-600" />
-          </button>
-
           <div
-            id="upcoming-cars-scroll"
-            className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
+            className="flex gap-6 overflow-x-auto scrollbar-hide pb-4"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {upcomingCars.map((car) => (
-              <Link
+              <div
                 key={car.id}
-                href={`/cars/${car.brand.toLowerCase().replace(' ', '-')}/${car.slug}`}
-                className="flex-shrink-0 w-72 bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-shadow"
+                className="flex-shrink-0 w-80 bg-white rounded-xl border border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden"
               >
-                {/* Car Image */}
-                <div className="h-48 bg-gradient-to-r from-orange-400 to-red-500 rounded-t-lg flex items-center justify-center relative">
-                  <div className="text-center text-white">
-                    <div className="w-20 h-12 bg-white/20 rounded-lg mx-auto mb-2 flex items-center justify-center">
-                      <span className="text-xs font-medium">CAR</span>
+                {/* Car Image with Badges */}
+                <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
+                  {/* NEW Badge */}
+                  {car.isNew && (
+                    <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10">
+                      NEW
                     </div>
-                    <p className="text-sm opacity-80">{car.brand} {car.name}</p>
-                  </div>
+                  )}
                   
-                  {/* Launch Status Badge */}
-                  <div className="absolute top-3 right-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      car.isConfirmed 
-                        ? 'bg-green-500 text-white' 
-                        : 'bg-yellow-500 text-black'
-                    }`}>
-                      {car.isConfirmed ? 'Confirmed' : 'Expected'}
-                    </span>
+                  {/* Heart Icon */}
+                  <button className="absolute top-4 right-4 p-2 bg-white/80 rounded-full hover:bg-white transition-colors z-10">
+                    <Heart className="h-5 w-5 text-gray-600" />
+                  </button>
+
+                  {/* Car Image */}
+                  <div className="w-full h-full flex items-center justify-center">
+                    <img 
+                      src={car.image}
+                      alt={`${car.brand} ${car.name}`}
+                      className="w-full h-full object-cover object-center scale-110 hover:scale-115 transition-transform duration-300"
+                      onError={(e) => {
+                        e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' fill='%23374151'%3E%3Cpath d='M50 200h300c5.5 0 10-4.5 10-10v-80c0-16.6-13.4-30-30-30H70c-16.6 0-30 13.4-30 30v80c0 5.5 4.5 10 10 10z'/%3E%3Ccircle cx='100' cy='220' r='25' fill='%23111827'/%3E%3Ccircle cx='300' cy='220' r='25' fill='%23111827'/%3E%3Cpath d='M80 110h240l-20-30H100z' fill='%236B7280'/%3E%3C/svg%3E"
+                      }}
+                    />
                   </div>
                 </div>
 
                 {/* Car Info */}
-                <div className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-1">{car.brand} {car.name}</h3>
+                <div className="p-5">
+                  <h3 className="font-bold text-gray-900 mb-2 text-lg">{car.brand} {car.name}</h3>
                   
-                  <div className="flex items-center text-green-600 font-bold text-lg mb-3">
-                    <IndianRupee className="h-4 w-4 mr-1" />
-                    <span>{car.expectedPrice}</span>
+                  <div className="flex items-center text-red-600 font-bold text-xl mb-4">
+                    <span>₹ {(car.startingPrice / 100000).toFixed(2)} Lakh</span>
                   </div>
 
-                  <div className="space-y-2 text-sm text-gray-600">
+                  <div className="space-y-3 text-sm text-gray-600 mb-4">
                     <div className="flex items-center">
-                      <Calendar className="h-4 w-4 mr-2" />
+                      <Calendar className="h-4 w-4 mr-3 text-gray-400" />
                       <span>{car.launchDate}</span>
                     </div>
                     <div className="flex items-center">
-                      <span className="w-4 h-4 mr-2 text-center text-xs">⛽</span>
+                      <Fuel className="h-4 w-4 mr-3 text-gray-400" />
                       <span>{car.fuelType}</span>
                     </div>
                     <div className="flex items-center">
-                      <Clock className="h-4 w-4 mr-2" />
-                      <span>{car.bodyType}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      <span>{car.city}</span>
+                      <Users className="h-4 w-4 mr-3 text-gray-400" />
+                      <span>{car.seating} Seater</span>
                     </div>
                   </div>
 
-                  <button className="w-full mt-4 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium">
-                    Get Notified
+                  <button className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white py-3 rounded-lg transition-all duration-200 text-sm font-semibold">
+                    View Details
                   </button>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </div>

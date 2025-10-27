@@ -6,9 +6,9 @@ import Footer from '@/components/Footer'
 import Link from 'next/link'
 
 interface ArticleDetailPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 // Mock article data - in real app, this would be fetched from database
@@ -83,7 +83,8 @@ const getArticleById = (id: string) => {
 }
 
 export async function generateMetadata({ params }: ArticleDetailPageProps): Promise<Metadata> {
-  const article = getArticleById(params.id)
+  const { id } = await params
+  const article = getArticleById(id)
   
   if (!article) {
     return {
@@ -100,7 +101,7 @@ export async function generateMetadata({ params }: ArticleDetailPageProps): Prom
       title: article.title,
       description: article.excerpt,
       type: 'article',
-      url: `/news/${params.id}`,
+      url: `/news/${id}`,
       publishedTime: article.publishedAt,
       modifiedTime: article.updatedAt,
       authors: [article.author],
@@ -112,13 +113,14 @@ export async function generateMetadata({ params }: ArticleDetailPageProps): Prom
       description: article.excerpt,
     },
     alternates: {
-      canonical: `/news/${params.id}`,
+      canonical: `/news/${id}`,
     },
   }
 }
 
-export default function ArticleDetailPage({ params }: ArticleDetailPageProps) {
-  const article = getArticleById(params.id)
+export default async function ArticleDetailPage({ params }: ArticleDetailPageProps) {
+  const { id } = await params
+  const article = getArticleById(id)
 
   if (!article) {
     notFound()

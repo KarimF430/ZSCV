@@ -248,13 +248,16 @@ export default function BrandCarsListing({ brand }: BrandCarsListingProps) {
     ))
   }
 
-  if (!currentBrandInfo) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">Brand Not Found</h1>
-        <p className="text-gray-600">The requested brand page could not be found.</p>
-      </div>
-    )
+  // If brand info not found in mock data, create a default one
+  const displayBrandInfo = currentBrandInfo || {
+    name: brandName,
+    logo: '',
+    description: `Explore ${brandName} cars`,
+    established: '',
+    headquarters: '',
+    totalModels: 0,
+    popularModels: [],
+    highlights: []
   }
 
   return (
@@ -267,7 +270,7 @@ export default function BrandCarsListing({ brand }: BrandCarsListingProps) {
             <ChevronRight className="h-4 w-4 text-gray-400" />
             <Link href="/new-cars" className="text-gray-500 hover:text-gray-700">New Cars</Link>
             <ChevronRight className="h-4 w-4 text-gray-400" />
-            <span className="text-gray-900 font-medium">{currentBrandInfo.name}</span>
+            <span className="text-gray-900 font-medium">{displayBrandInfo.name}</span>
           </nav>
         </div>
       </div>
@@ -279,22 +282,22 @@ export default function BrandCarsListing({ brand }: BrandCarsListingProps) {
             <div className="flex items-center space-x-6 mb-6 lg:mb-0">
               <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
                 <span className="text-2xl font-bold text-gray-600">
-                  {currentBrandInfo.name.charAt(0)}
+                  {displayBrandInfo.name.charAt(0)}
                 </span>
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  {currentBrandInfo.name} Cars
+                  {displayBrandInfo.name} Cars
                 </h1>
                 <p className="text-gray-600 max-w-2xl">
-                  {currentBrandInfo.description}
+                  {displayBrandInfo.description}
                 </p>
               </div>
             </div>
             
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-center">
               <div>
-                <p className="text-2xl font-bold text-primary-600">{currentBrandInfo.totalModels}</p>
+                <p className="text-2xl font-bold text-primary-600">{displayBrandInfo.totalModels}</p>
                 <p className="text-sm text-gray-600">Models</p>
               </div>
               <div>
@@ -303,7 +306,7 @@ export default function BrandCarsListing({ brand }: BrandCarsListingProps) {
               </div>
               <div>
                 <p className="text-2xl font-bold text-primary-600">
-                  {currentBrandInfo.established}
+                  {displayBrandInfo.established}
                 </p>
                 <p className="text-sm text-gray-600">Est.</p>
               </div>
@@ -318,9 +321,9 @@ export default function BrandCarsListing({ brand }: BrandCarsListingProps) {
 
           {/* Brand Highlights */}
           <div className="mt-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Why Choose {currentBrandInfo.name}?</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Why Choose {displayBrandInfo.name}?</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {currentBrandInfo.highlights.map((highlight, index) => (
+              {displayBrandInfo.highlights.map((highlight, index) => (
                 <div key={index} className="flex items-center space-x-2 text-sm text-gray-700">
                   <div className="w-2 h-2 bg-primary-600 rounded-full"></div>
                   <span>{highlight}</span>
@@ -406,7 +409,7 @@ export default function BrandCarsListing({ brand }: BrandCarsListingProps) {
           </div>
 
           <div className="mt-4 text-sm text-gray-600">
-            Showing {sortedCars.length} of {brandCars.length} {currentBrandInfo.name} cars
+            Showing {sortedCars.length} of {brandCars.length} {displayBrandInfo.name} cars
           </div>
         </div>
 
@@ -538,7 +541,7 @@ export default function BrandCarsListing({ brand }: BrandCarsListingProps) {
                 No cars found
               </h3>
               <p className="text-gray-600 mb-6">
-                Try adjusting your filters to see more {currentBrandInfo.name} cars
+                Try adjusting your filters to see more {displayBrandInfo.name} cars
               </p>
               <button
                 onClick={() => {

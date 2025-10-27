@@ -2,13 +2,14 @@ import { Metadata } from 'next'
 import BrandCarsListing from '@/components/brand/BrandCarsListing'
 
 interface BrandPageProps {
-  params: {
+  params: Promise<{
     brand: string
-  }
+  }>
 }
 
 export async function generateMetadata({ params }: BrandPageProps): Promise<Metadata> {
-  const brandName = params.brand.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())
+  const { brand } = await params
+  const brandName = brand.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())
   
   return {
     title: `${brandName} Cars - New Models, Prices & Reviews | MotorOctane`,
@@ -22,10 +23,11 @@ export async function generateMetadata({ params }: BrandPageProps): Promise<Meta
   }
 }
 
-export default function BrandPage({ params }: BrandPageProps) {
+export default async function BrandPage({ params }: BrandPageProps) {
+  const { brand } = await params
   return (
     <div className="min-h-screen bg-gray-50">
-      <BrandCarsListing brand={params.brand} />
+      <BrandCarsListing brand={brand} />
     </div>
   )
 }

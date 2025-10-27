@@ -107,17 +107,6 @@ export default function LatestCarNews() {
     }
   ]
 
-  const scrollContainer = (direction: 'left' | 'right') => {
-    const container = document.getElementById('latest-news-scroll')
-    if (container) {
-      const scrollAmount = 350
-      container.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      })
-    }
-  }
-
   const getCategoryColor = (category: string) => {
     switch (category.toLowerCase()) {
       case 'review':
@@ -133,14 +122,25 @@ export default function LatestCarNews() {
     }
   }
 
+  const scrollContainer = (direction: 'left' | 'right') => {
+    const container = document.getElementById('latest-news-scroll')
+    if (container) {
+      const scrollAmount = 350
+      container.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      })
+    }
+  }
+
   return (
-    <section className="py-8">
+    <section className="py-8 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Latest Car News</h2>
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-bold text-gray-900">Latest Car News</h2>
           <Link 
             href="/news" 
-            className="flex items-center text-orange-600 hover:text-orange-700 font-medium"
+            className="flex items-center text-red-600 hover:text-orange-600 font-medium"
           >
             View All News
             <ArrowRight className="h-4 w-4 ml-1" />
@@ -149,43 +149,47 @@ export default function LatestCarNews() {
         
         {/* News Articles Horizontal Scroll */}
         <div className="relative">
+          {/* Left Arrow */}
           <button
             onClick={() => scrollContainer('left')}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors"
           >
             <ChevronLeft className="h-5 w-5 text-gray-600" />
           </button>
           
+          {/* Right Arrow */}
           <button
             onClick={() => scrollContainer('right')}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors"
           >
             <ChevronRight className="h-5 w-5 text-gray-600" />
           </button>
 
           <div
             id="latest-news-scroll"
-            className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
+            className="flex gap-6 overflow-x-auto scrollbar-hide pb-4"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {newsArticles.map((article) => (
               <Link
                 key={article.id}
                 href={`/news/${article.slug}`}
-                className="flex-shrink-0 w-80 bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-shadow"
+                className="flex-shrink-0 w-80 bg-white rounded-xl border border-gray-200 hover:shadow-lg transition-shadow overflow-hidden"
               >
-                {/* Article Image */}
-                <div className="h-48 bg-gradient-to-r from-blue-400 to-purple-500 rounded-t-lg flex items-center justify-center relative">
-                  <div className="text-center text-white">
-                    <div className="w-16 h-10 bg-white/20 rounded-lg mx-auto mb-2 flex items-center justify-center">
+                {/* Article Image with Gradient */}
+                <div className="h-56 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 flex items-center justify-center relative">
+                  <div className="text-center text-white px-4">
+                    <div className="w-16 h-10 bg-white/20 rounded-lg mx-auto mb-3 flex items-center justify-center">
                       <span className="text-xs font-medium">NEWS</span>
                     </div>
-                    <p className="text-sm opacity-80 px-4 line-clamp-2">{article.title}</p>
+                    <h3 className="text-base font-bold leading-tight">
+                      {article.title}
+                    </h3>
                   </div>
                   
                   {/* Category Badge */}
                   <div className="absolute top-3 left-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(article.category)}`}>
+                    <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-medium">
                       {article.category}
                     </span>
                   </div>
@@ -202,11 +206,11 @@ export default function LatestCarNews() {
 
                 {/* Article Info */}
                 <div className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-2 line-clamp-2 leading-tight">
+                  <h3 className="font-bold text-gray-900 mb-2 text-base leading-tight">
                     {article.title}
                   </h3>
                   
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                  <p className="text-sm text-gray-600 mb-3 leading-relaxed line-clamp-2">
                     {article.excerpt}
                   </p>
 
@@ -222,20 +226,18 @@ export default function LatestCarNews() {
                   </div>
 
                   {/* Article Stats */}
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center">
-                        <Clock className="h-3 w-3 mr-1" />
-                        <span>{article.readTime}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Eye className="h-3 w-3 mr-1" />
-                        <span>{article.views.toLocaleString()}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <MessageCircle className="h-3 w-3 mr-1" />
-                        <span>{article.comments}</span>
-                      </div>
+                  <div className="flex items-center space-x-3 text-xs text-gray-500">
+                    <div className="flex items-center">
+                      <Clock className="h-3 w-3 mr-1" />
+                      <span>{article.readTime}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Eye className="h-3 w-3 mr-1" />
+                      <span>{article.views.toLocaleString()}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <MessageCircle className="h-3 w-3 mr-1" />
+                      <span>{article.comments}</span>
                     </div>
                   </div>
                 </div>

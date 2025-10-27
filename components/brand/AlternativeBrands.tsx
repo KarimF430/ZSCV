@@ -1,14 +1,15 @@
 'use client'
 
-import { ArrowRight } from 'lucide-react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { ChevronDown, ChevronUp } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 interface Brand {
   id: string
   name: string
   logo: string
-  description: string
-  popularModel: string
-  startingPrice: string
+  slug: string
 }
 
 interface AlternativeBrandsProps {
@@ -16,72 +17,134 @@ interface AlternativeBrandsProps {
 }
 
 export default function AlternativeBrands({ currentBrand }: AlternativeBrandsProps) {
-  const allBrands: Brand[] = [
-    { id: 'maruti', name: 'Maruti Suzuki', logo: '/brands/maruti.png', description: 'India\'s most trusted car brand', popularModel: 'Swift', startingPrice: '₹5.85 Lakh' },
-    { id: 'hyundai', name: 'Hyundai', logo: '/brands/hyundai.png', description: 'Premium features & technology', popularModel: 'Creta', startingPrice: '₹11.00 Lakh' },
-    { id: 'tata', name: 'Tata Motors', logo: '/brands/tata.png', description: 'Safety & innovation leader', popularModel: 'Nexon', startingPrice: '₹7.80 Lakh' },
-    { id: 'mahindra', name: 'Mahindra', logo: '/brands/mahindra.png', description: 'Tough & rugged SUVs', popularModel: 'XUV700', startingPrice: '₹13.45 Lakh' },
-    { id: 'kia', name: 'Kia', logo: '/brands/kia.png', description: 'Modern design & features', popularModel: 'Seltos', startingPrice: '₹10.90 Lakh' },
-    { id: 'toyota', name: 'Toyota', logo: '/brands/toyota.png', description: 'Reliability & quality', popularModel: 'Innova Crysta', startingPrice: '₹19.99 Lakh' }
-  ]
+  const [showAllBrands, setShowAllBrands] = useState(false)
+  const [allBrands, setAllBrands] = useState<Brand[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  // Filter out the current brand
-  const alternativeBrands = allBrands.filter(brand => brand.id !== currentBrand)
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        setLoading(true)
+        console.log('🚀 AlternativeBrands: Fetching brands...')
+        
+        // Fetch brands from backend
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5001'}/api/brands`)
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+        }
+        
+        const brands = await response.json()
+        console.log('📊 AlternativeBrands: Raw brands data:', brands)
+        
+        if (!Array.isArray(brands)) {
+          throw new Error('Invalid response format')
+        }
+        
+        // Transform backend brands to frontend format, excluding current brand
+        const transformedBrands = brands
+          .filter((brand: any) => {
+            const brandSlug = brand.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+            return brand.status === 'active' && brandSlug !== currentBrand
+          })
+          .map((brand: any) => {
+            return {
+              id: brand.id,
+              name: brand.name,
+              logo: brand.logo ? `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5001'}${brand.logo}` : '/brands/default.png',
+              slug: brand.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+            }
+          })
+          // Keep original backend order (by ranking)
+        
+        setAllBrands(transformedBrands)
+        console.log('✅ AlternativeBrands: Loaded brands:', transformedBrands.length)
+      } catch (err) {
+        console.error('❌ AlternativeBrands: Error:', err)
+        setError(err instanceof Error ? err.message : 'Failed to load brands')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchBrands()
+  }, [currentBrand])
 
   return (
-    <section className="py-12 bg-white">
+    <section className="py-8 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Alternative Brands
-            </h2>
-            <p className="text-gray-600">
-              Explore other popular car brands in India
-            </p>
-          </div>
-          <button className="hidden md:flex items-center text-blue-600 hover:text-blue-700 font-medium">
-            View All Brands
-            <ArrowRight className="h-4 w-4 ml-1" />
-          </button>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {alternativeBrands.slice(0, 5).map((brand) => (
-            <div key={brand.id} className="group cursor-pointer">
-              <div className="bg-gray-50 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group-hover:-translate-y-1">
-                {/* Brand Logo */}
-                <div className="w-16 h-16 mx-auto mb-4 bg-white rounded-full flex items-center justify-center shadow-sm">
-                  <span className="text-2xl font-bold text-blue-600">
-                    {brand.name.charAt(0)}
-                  </span>
+        <h2 className="text-3xl font-bold text-gray-900 mb-8">Alternative Brands</h2>
+        
+        {/* Brands Grid */}
+        {loading ? (
+          <div className="grid grid-cols-3 gap-4 max-w-4xl mx-auto mb-8">
+            {[...Array(6)].map((_, index) => (
+              <div key={index} className="bg-white rounded-lg border border-gray-200 p-4 text-center animate-pulse">
+                <div className="h-16 flex items-center justify-center mb-3">
+                  <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
                 </div>
-                
-                {/* Brand Info */}
-                <div className="text-center">
-                  <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
-                    {brand.name}
-                  </h3>
-                  <p className="text-xs text-gray-500 mb-3">
-                    {brand.description}
-                  </p>
-                  
-                  {/* Popular Model */}
-                  <div className="bg-white rounded-lg p-3 border border-gray-100">
-                    <div className="text-sm font-medium text-gray-900">{brand.popularModel}</div>
-                    <div className="text-xs text-blue-600 font-semibold">{brand.startingPrice}</div>
+                <div className="h-4 bg-gray-200 rounded mb-1"></div>
+                <div className="h-3 bg-gray-200 rounded mb-1"></div>
+                <div className="h-3 bg-gray-200 rounded"></div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-4 max-w-4xl mx-auto mb-8">
+            {/* Show only backend brands */}
+            {(showAllBrands ? allBrands : allBrands.slice(0, 6)).map((brand) => (
+              <Link
+                key={brand.id}
+                href={`/${brand.slug}-cars`}
+                className="bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-all duration-300 p-3 text-center"
+              >
+                {/* Brand Logo */}
+                <div className="h-14 flex items-center justify-center mb-2">
+                  {brand.logo && (brand.logo.startsWith('http') || brand.logo.startsWith('/uploads')) ? (
+                    <img
+                      src={brand.logo}
+                      alt={`${brand.name} logo`}
+                      className="w-12 h-12 object-contain"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const fallback = target.parentElement?.querySelector('.fallback-logo') as HTMLElement;
+                        if (fallback) fallback.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div className={`fallback-logo w-12 h-12 bg-gradient-to-r from-red-600 to-orange-500 rounded-lg flex items-center justify-center ${brand.logo && (brand.logo.startsWith('http') || brand.logo.startsWith('/uploads')) ? 'hidden' : ''}`}>
+                    <span className="text-sm font-bold text-white">
+                      {brand.name.split(' ').map((word: string) => word.charAt(0)).join('')}
+                    </span>
                   </div>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
 
-        {/* Mobile View All Button */}
-        <div className="mt-8 text-center md:hidden">
-          <button className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium">
-            View All Brands
-            <ArrowRight className="h-4 w-4 ml-1" />
+                {/* Brand Name */}
+                <h3 className="font-medium text-gray-900 text-sm">{brand.name}</h3>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {/* Show All Brands Button */}
+        <div className="text-center">
+          <button
+            onClick={() => setShowAllBrands(!showAllBrands)}
+            className="inline-flex items-center bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 shadow-md"
+          >
+            {showAllBrands ? (
+              <>
+                <ChevronUp className="h-5 w-5 mr-2" />
+                Show Less Brands
+              </>
+            ) : (
+              <>
+                <ChevronDown className="h-5 w-5 mr-2" />
+                Show All {allBrands.length} Brands
+              </>
+            )}
           </button>
         </div>
       </div>

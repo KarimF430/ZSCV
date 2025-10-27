@@ -1,132 +1,122 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Search, Menu, X, Car, Calculator, FileText, MapPin } from 'lucide-react'
+import { Search, Menu, X, MapPin } from 'lucide-react'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
-  const toggleSearch = () => setIsSearchOpen(!isSearchOpen)
+
+  // Handle scroll for header visibility
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling down and past 100px
+        setIsHeaderVisible(false)
+      } else {
+        // Scrolling up
+        setIsHeaderVisible(true)
+      }
+      
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [lastScrollY])
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+    <header className={`bg-white shadow-sm sticky top-0 z-50 transition-transform duration-300 ${
+      isHeaderVisible ? 'translate-y-0' : '-translate-y-full'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <Car className="h-8 w-8 text-primary-600" />
-            <span className="text-xl font-bold text-gray-900">MotorOctane</span>
+          <Link href="/" className="flex items-center space-x-2 group">
+            <div className="flex items-center">
+              {/* MO Logo with Gradient */}
+              <div className="h-10 w-10 bg-gradient-to-r from-red-600 to-orange-500 rounded-lg flex items-center justify-center group-hover:from-red-700 group-hover:to-orange-600 transition-all duration-300">
+                <span className="text-white font-bold text-lg">MO</span>
+              </div>
+              <span className="text-2xl font-bold text-gray-900 ml-2 group-hover:text-red-600 transition-colors">MotorOctane</span>
+            </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/new-cars" className="text-gray-700 hover:text-primary-600 font-medium">
-              New Cars
-            </Link>
-            <Link href="/compare" className="text-gray-700 hover:text-primary-600 font-medium">
-              Compare
-            </Link>
-            <Link href="/emi-calculator" className="text-gray-700 hover:text-primary-600 font-medium">
-              EMI Calculator
-            </Link>
-            <Link href="/offers" className="text-gray-700 hover:text-primary-600 font-medium">
-              Offers
-            </Link>
-            <Link href="/news" className="text-gray-700 hover:text-primary-600 font-medium">
-              News
-            </Link>
-          </nav>
-
-          {/* Desktop Search & Mobile Menu Button */}
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={toggleSearch}
-              className="p-2 text-gray-500 hover:text-primary-600 md:hidden"
+          {/* Right Side Icons */}
+          <div className="flex items-center space-x-2">
+            {/* Search Icon - Navigate to Search Page */}
+            <Link
+              href="/search"
+              className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
+              aria-label="Search cars"
             >
               <Search className="h-5 w-5" />
-            </button>
+            </Link>
             
-            {/* Desktop Search */}
-            <div className="hidden md:flex items-center">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search cars, brands..."
-                  className="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                />
-                <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-              </div>
-            </div>
+            {/* Location Icon - Navigate to Location Page */}
+            <Link
+              href="/location"
+              className="p-2 text-gray-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-all duration-200"
+              aria-label="Select location"
+            >
+              <MapPin className="h-5 w-5" />
+            </Link>
 
+            {/* Hamburger Menu */}
             <button
               onClick={toggleMenu}
-              className="p-2 text-gray-500 hover:text-primary-600 md:hidden"
+              className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Search */}
-        {isSearchOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search cars, brands..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
-              <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-            </div>
-          </div>
-        )}
-
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
-            <nav className="flex flex-col space-y-4">
+          <div className="py-4 border-t border-gray-200 bg-white">
+            <nav className="flex flex-col space-y-1">
               <Link
                 href="/new-cars"
-                className="flex items-center space-x-3 text-gray-700 hover:text-primary-600 font-medium"
+                className="text-gray-700 hover:text-red-600 hover:bg-red-50 font-medium py-3 px-4 rounded-lg transition-all duration-200"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <Car className="h-5 w-5" />
-                <span>New Cars</span>
+                New Cars
               </Link>
               <Link
                 href="/compare"
-                className="flex items-center space-x-3 text-gray-700 hover:text-primary-600 font-medium"
+                className="text-gray-700 hover:text-orange-600 hover:bg-orange-50 font-medium py-3 px-4 rounded-lg transition-all duration-200"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <FileText className="h-5 w-5" />
-                <span>Compare</span>
+                Compare Cars
+              </Link>
+              <Link
+                href="/brands"
+                className="text-gray-700 hover:text-red-600 hover:bg-red-50 font-medium py-3 px-4 rounded-lg transition-all duration-200"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Car Brands
               </Link>
               <Link
                 href="/emi-calculator"
-                className="flex items-center space-x-3 text-gray-700 hover:text-primary-600 font-medium"
+                className="text-gray-700 hover:text-orange-600 hover:bg-orange-50 font-medium py-3 px-4 rounded-lg transition-all duration-200"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <Calculator className="h-5 w-5" />
-                <span>EMI Calculator</span>
-              </Link>
-              <Link
-                href="/offers"
-                className="flex items-center space-x-3 text-gray-700 hover:text-primary-600 font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <MapPin className="h-5 w-5" />
-                <span>Offers</span>
+                EMI Calculator
               </Link>
               <Link
                 href="/news"
-                className="flex items-center space-x-3 text-gray-700 hover:text-primary-600 font-medium"
+                className="text-gray-700 hover:text-red-600 hover:bg-red-50 font-medium py-3 px-4 rounded-lg transition-all duration-200"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <FileText className="h-5 w-5" />
-                <span>News</span>
+                Car News
               </Link>
             </nav>
           </div>

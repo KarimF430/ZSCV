@@ -31,7 +31,7 @@ export default function PageSection({
   }
 
   return (
-    <section className={`${bgClasses[background]} py-8 ${className}`}>
+    <section className={`${bgClasses[background]} py-4 ${className}`}>
       <div className={`${maxWidthClasses[maxWidth]} mx-auto px-4 sm:px-6 lg:px-8`}>
         {(title || subtitle) && (
           <div className="mb-6">

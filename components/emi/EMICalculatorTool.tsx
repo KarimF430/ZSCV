@@ -231,7 +231,7 @@ export default function EMICalculatorTool() {
               <p className="text-sm text-gray-600">
                 {selectedCar.engine} • {selectedCar.fuelType} • {selectedCar.transmission}
               </p>
-              <p className="text-sm text-primary-600 font-medium">
+              <p className="text-sm text-red-600 font-medium">
                 On-road price: {formatLakh(selectedCar.onRoadPrice)}
               </p>
             </div>
@@ -266,7 +266,7 @@ export default function EMICalculatorTool() {
                   placeholder="Search car variants..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -288,7 +288,7 @@ export default function EMICalculatorTool() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-primary-600">
+                      <p className="font-semibold text-red-600">
                         {formatLakh(car.onRoadPrice)}
                       </p>
                       <p className="text-xs text-gray-500">On-road price</p>
@@ -320,7 +320,7 @@ export default function EMICalculatorTool() {
                   setDownPayment(dp)
                   setLoanAmount(selectedCar.onRoadPrice - dp)
                 }}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               />
               <div className="flex justify-between text-xs text-gray-500 mt-1">
                 <span>Min: {formatCurrency(selectedCar.onRoadPrice * 0.1)}</span>
@@ -341,7 +341,7 @@ export default function EMICalculatorTool() {
                   setLoanAmount(la)
                   setDownPayment(selectedCar.onRoadPrice - la)
                 }}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               />
               <p className="text-xs text-gray-500 mt-1">
                 Max: {formatCurrency(selectedCar.onRoadPrice * 0.9)}
@@ -358,7 +358,7 @@ export default function EMICalculatorTool() {
                 step="0.1"
                 value={interestRate}
                 onChange={(e) => setInterestRate(Number(e.target.value) || 0)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               />
               <p className="text-xs text-gray-500 mt-1">
                 Typical range: 7.5% - 12%
@@ -373,7 +373,7 @@ export default function EMICalculatorTool() {
               <select
                 value={tenure}
                 onChange={(e) => setTenure(Number(e.target.value))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               >
                 <option value={1}>1 Year</option>
                 <option value={2}>2 Years</option>
@@ -406,12 +406,12 @@ export default function EMICalculatorTool() {
           <div className="p-6">
             {/* EMI Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <div className="bg-primary-50 p-4 rounded-lg">
+              <div className="bg-gradient-to-r from-red-50 to-orange-50 p-4 rounded-lg">
                 <div className="flex items-center space-x-2 mb-2">
-                  <Calculator className="h-5 w-5 text-primary-600" />
-                  <span className="text-sm font-medium text-primary-700">Monthly EMI</span>
+                  <Calculator className="h-5 w-5 text-red-600" />
+                  <span className="text-sm font-medium text-gray-700">Monthly EMI</span>
                 </div>
-                <p className="text-2xl font-bold text-primary-600">
+                <p className="text-2xl font-bold text-red-600">
                   {formatCurrency(emiCalculation.emi)}
                 </p>
               </div>
@@ -476,7 +476,7 @@ export default function EMICalculatorTool() {
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
               <button
                 onClick={() => setShowAmortization(!showAmortization)}
-                className="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+                className="flex-1 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
               >
                 <Calendar className="h-5 w-5" />
                 <span>{showAmortization ? 'Hide' : 'Show'} Amortization Table</span>
@@ -561,7 +561,7 @@ export default function EMICalculatorTool() {
             </p>
             <button
               onClick={() => setShowCarSelector(true)}
-              className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
+              className="bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
             >
               Choose Car Variant
             </button>

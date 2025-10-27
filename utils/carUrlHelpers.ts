@@ -142,3 +142,23 @@ export const generateCarStructuredData = (car: any) => {
     }
   }
 }
+
+/**
+ * Generate SEO-friendly variant slug
+ * Format: brand-model-variant-name (all lowercase, hyphenated)
+ */
+export const generateVariantSlug = (brand: string, model: string, variant: string): string => {
+  return `${generateSlug(brand)}-${generateSlug(model)}-${generateSlug(variant)}`
+}
+
+/**
+ * Parse SEO variant slug back to brand, model, and variant
+ * Assumes first two segments are brand and model; remaining joined as variant
+ */
+export const parseVariantSlug = (slug: string): { brand: string; model: string; variant: string } => {
+  const parts = slug.split('-')
+  const brand = parts[0] || ''
+  const model = parts[1] || ''
+  const variant = parts.slice(2).join('-')
+  return { brand, model, variant }
+}

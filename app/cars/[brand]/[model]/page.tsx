@@ -3,14 +3,15 @@ import CarModelPage from '@/components/car-model/CarModelPage'
 import { generateCarStructuredData, parseCarFromUrl, generateCanonicalUrl } from '@/utils/carUrlHelpers'
 
 interface PageProps {
-  params: {
+  params: Promise<{
     brand: string
     model: string
-  }
+  }>
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { brand, model } = parseCarFromUrl(params.brand, params.model)
+  const { brand: brandSlug, model: modelSlug } = await params
+  const { brand, model } = parseCarFromUrl(brandSlug, modelSlug)
   const fullName = `${brand} ${model}`
   
   // In a real app, you would fetch car data here
@@ -53,68 +54,68 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default function ModelPage({ params }: PageProps) {
-  const { brand, model } = parseCarFromUrl(params.brand, params.model)
+export default async function ModelPage({ params }: PageProps) {
+  const { brand: brandSlug, model: modelSlug } = await params
+  const { brand, model } = parseCarFromUrl(brandSlug, modelSlug)
   
-  const carData = {
-    brand,
-    model,
-    fullName: `${brand} ${model}`,
-    startingPrice: 619000,
-    endingPrice: 1250000,
-    rating: 4.2,
-    reviewCount: 1543,
-    launchYear: 2023,
-    description: `The ${brand} ${model} is a premium vehicle that combines performance, comfort, and advanced technology. With its sleek design and efficient engine, it offers an exceptional driving experience for modern car buyers.`,
-    images: [
-      '/api/placeholder/800/600',
-      '/api/placeholder/800/600',
-      '/api/placeholder/800/600',
-      '/api/placeholder/800/600'
-    ],
-    specifications: {
-      engine: '1.5L Petrol',
-      power: '103 HP',
-      torque: '138 Nm',
-      transmission: 'Manual/Automatic',
-      fuelType: 'Petrol',
-      mileage: '20.5 kmpl',
-      seatingCapacity: 5,
-      groundClearance: '180 mm',
-      bootSpace: '510 L',
-      safetyRating: '4 Star',
-      airbags: 6,
-      abs: true
-    },
-    colors: [
-      { id: '1', name: 'Pearl White', hexCode: '#FFFFFF', popular: true },
-      { id: '2', name: 'Metallic Silver', hexCode: '#C0C0C0', popular: true },
-      { id: '3', name: 'Deep Black', hexCode: '#000000', popular: false },
-      { id: '4', name: 'Royal Blue', hexCode: '#0066CC', popular: false },
-      { id: '5', name: 'Crimson Red', hexCode: '#DC143C', popular: true }
-    ],
-    pros: [
-      'Excellent fuel efficiency',
-      'Spacious interior',
-      'Advanced safety features',
-      'Reliable performance',
-      'Good resale value'
-    ],
-    cons: [
-      'Limited rear seat space',
-      'Road noise at high speeds',
-      'Basic infotainment system'
-    ],
-    mileage: {
-      city: '18.5 kmpl',
-      highway: '22.5 kmpl',
-      combined: '20.5 kmpl'
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5001'
+  
+  try {
+    // Fetch all models and brands to find the matching one
+    const [modelsRes, brandsRes] = await Promise.all([
+      fetch(`${backendUrl}/api/models`, { cache: 'no-store' }),
+      fetch(`${backendUrl}/api/brands`, { cache: 'no-store' })
+    ])
+    
+    const models = await modelsRes.json()
+    const brands = await brandsRes.json()
+    
+    // Find the brand by slug
+    const foundBrand = brands.find((b: any) => 
+      b.name.toLowerCase().replace(/\s+/g, '-') === brandSlug
+    )
+    
+    if (!foundBrand) {
+      throw new Error('Brand not found')
     }
+    
+    // Find the model by slug and brand
+    const foundModel = models.find((m: any) => 
+      m.brandId === foundBrand.id && 
+      m.name.toLowerCase().replace(/\s+/g, '-') === modelSlug
+    )
+    
+    if (!foundModel) {
+      throw new Error('Model not found')
+    }
+    
+    // Add brand name to model data
+    const modelWithBrand = {
+      ...foundModel,
+      brand: foundBrand.name,
+      brandName: foundBrand.name
+    }
+    
+    // Pass the real model data to CarModelPage
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <CarModelPage model={modelWithBrand} />
+      </div>
+    )
+  } catch (error) {
+    console.error('Error fetching model data:', error)
+    
+    // Fallback to a not found page or error message
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Model Not Found</h1>
+          <p className="text-gray-600 mb-8">The car model you're looking for doesn't exist.</p>
+          <a href="/" className="bg-gradient-to-r from-red-600 to-orange-500 text-white px-6 py-3 rounded-lg hover:from-red-700 hover:to-orange-600 transition-all">
+            Go to Homepage
+          </a>
+        </div>
+      </div>
+    )
   }
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <CarModelPage carData={carData} />
-    </div>
-  )
 }
